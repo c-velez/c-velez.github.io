@@ -99,21 +99,25 @@ content:
   - title: Education # Title for the section
     layout: list # Type of content section (list/text)
     content:
-      - layout: left
+      - layout: top-middle
         title: University of Central Florida
         caption: January 2020 - December 2023 (Expected)
         sub_title: BSc Information Security
 
-      - layout: left
-        title: United States Air Force: Cyber Warfare Operations
+      - layout: top-middle
+        title: United States Air Force 
+        sub_title: Cyber Warfare Operations
         caption: October 2019 - December 2019
 
-      - layout: left
-        title: United States Air Force: Undergraduate Cyber Training
-        caption: May 2016 - November 2016
-        sub_title: CompTIA Security+ (Oct 2022)
+      - layout: top-middle
+        title: United States Air Force
+        caption: |
+            May 2016 - November 2016
+            
+            CompTIA Security+ (Oct 2022)
+        sub_title: Undergraduate Cyber Training
 
-      - layout: left
+      - layout: top-middle
         title: University of Central Florida
         caption: August 2008 - December 2012
         sub_title: BSc Aerospace Engineering
