@@ -39,7 +39,7 @@ about_profile_image: images/profile.jpg
 about_content: | # this will include new lines to allow paragraphs
   Add content here
 
-  I am most skilled in: <mark>Pick a skill</mark> and <mark>Pick another skill</mark>
+  I am most skilled in: <mark>Network analysis</mark> and <mark>log analysis</mark>
 
 content:
   - title: Projects # Title for the section
@@ -69,10 +69,13 @@ content:
         link: p3f.llc
         # link_text: boringcompany.com
         sub_title: Threat Hunter
-        caption: Fill in dates
+        caption: June 2020 - April 2021
         #        quote: >
         description: | # this will include new lines to allow paragraphs
-            Fill in description
+            - Security operations and threat hunting subject matter expert; developed ground up processes and procedures for client security operations center
+            - Lef client through monitoring and alerting strategy via Mitre ATT&CK matrix; verified data sources and updated/created queries
+            - Tailored 150 out-of-box Elastic Alerts for client environment; worked with SIEM on-boarding team to create custom parsers for 5 log sources
+            - Worked with Information System Security Engineer to validate 10 Red Team findings; tested fixes implemented by development team
 
   - title: Education # Title for the section
     layout: list # Type of content section (list/text)
@@ -94,10 +97,6 @@ content:
     layout: text
     content: | # this will include new lines to allow paragraphs
       Alongside my interests in networks and software engineering some of my other interests and hobbies are:
-      - Rock climbing
-      - Gaming
-      - Knitting
-      - [Becoming a ninja](https://www.youtube.com/watch?v=vtg4o__aRMg)
 
 
 # Footer
