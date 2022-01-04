@@ -79,12 +79,16 @@ content:
     content:
       - layout: left
         title: University of Central Florida
-        caption: 2020 - Present
+        caption: January 2020 - December 2023 (Expected)
         sub_title: BSc Information Security
-        sub_title: Cybersecurity Operations Certificate
-        sub_title: Math Minor
-        #        quote: >
-        description: | # this will include new lines to allow paragraphs
+      - layout: left
+        title: United States Air Force: Undergraduate Cyber Training
+        caption: May 2016 - November 2016
+        sub_title: CompTIA Security+ (Oct 2022)
+      - layout: left
+        title: University of Central Florida
+        caption: August 2008 - December 2012
+        sub_title: BSc Aerospace Engineering
 
   - title: A Little More About Me
     layout: text
@@ -95,8 +99,6 @@ content:
       - Knitting
       - [Becoming a ninja](https://www.youtube.com/watch?v=vtg4o__aRMg)
 
-      Look at this cool image  
-      ![Trees](/modern-resume-theme/images/landscape-trees.jpg "Trees")
 
 # Footer
 footer_show_references: true
