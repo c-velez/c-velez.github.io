@@ -64,18 +64,37 @@ content:
   - title: Experience # Title for the section
     layout: list # Type of content section (list/text)
     content:
+
       - layout: left
         title: P3F
         link: p3f.llc
-        # link_text: boringcompany.com
         sub_title: Threat Hunter
         caption: June 2020 - April 2021
-        #        quote: >
         description: | # this will include new lines to allow paragraphs
             - Security operations and threat hunting subject matter expert; developed ground up processes and procedures for client security operations center
-            - Lef client through monitoring and alerting strategy via Mitre ATT&CK matrix; verified data sources and updated/created queries
+            - Led client through monitoring and alerting strategy via Mitre ATT&CK matrix; verified data sources and updated/created queries
             - Tailored 150 out-of-box Elastic Alerts for client environment; worked with SIEM on-boarding team to create custom parsers for 5 log sources
             - Worked with Information System Security Engineer to validate 10 Red Team findings; tested fixes implemented by development team
+
+      - layout: left
+        title: United States Air Force
+        sub_title: Deputy Chief, Mission Management
+        caption: June 2018 - December 2019
+        description: |
+            - Directed more than 60-member cross-functional team to enable access for national security operations
+            - Managed 24/7 watch office; required specialized training and access to conduct operations against high value targets
+            - Used networking knowledge, risk management, and exploitation methodology to advice high level network operators
+
+      - layout: left
+        title: United States Air Force
+        sub_title: Commander, Cyberspace Threat Intelligence Center
+        caption: November 2016 - June 2018
+        description: |
+            - Built and codified new Air Force mission, leading more than 60-member multi-disciplined team in cyberspace threat intelligence
+            - Demonstrated effective collaboration with customers; technical intelligence reporting resulted in over 400 defensive network actions
+            - Devloped actionable intelligence reporting team; integrated intelligence with technical data tailored for responders and executives
+            - Integrated multiple agencies to centralize disrtribution of intelligence analysis - expedited information sharing, boosted technical and intelligence reporting 300%
+            - Crafted indications and warning tipping process for enterprise level security operations center; reduced notification time by 66% - days to hours
 
   - title: Education # Title for the section
     layout: list # Type of content section (list/text)
@@ -84,10 +103,16 @@ content:
         title: University of Central Florida
         caption: January 2020 - December 2023 (Expected)
         sub_title: BSc Information Security
+
+      - layout: left
+        title: United States Air Force: Cyber Warfare Operations
+        caption: October 2019 - December 2019
+
       - layout: left
         title: United States Air Force: Undergraduate Cyber Training
         caption: May 2016 - November 2016
         sub_title: CompTIA Security+ (Oct 2022)
+
       - layout: left
         title: University of Central Florida
         caption: August 2008 - December 2012
