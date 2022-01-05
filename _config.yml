@@ -7,7 +7,7 @@ version: 2
 
 # Personal info
 name: Christopher Velez
-title: Cybersecurity Student
+title: Cyber Security Student | Air Force Veteran
 email: cvelez159@gmail.com
 website: c-velez.github.io
 
@@ -34,12 +34,10 @@ linkedin_username: cvelez159
 # google_analytics: "UA-00000000-0"
 
 # About Section
-# about_title: About Me
+about_title: About Me
 about_profile_image: images/profile.jpg
 about_content: | # this will include new lines to allow paragraphs
-  Add content here
-
-  I am most skilled in: <mark>Network analysis</mark> and <mark>log analysis</mark>
+   I am a United States Air Force Veteran looking for opportunities in Cyber Security and Cyberspace Operations in the Orlando area. Specifically, my areas of interest include malware analysis, digital forensics and incident response, red team operations, and threat intelligence. During my 6.5 years of service, I have developed a strong skill set of leadership and management, operational and strategic planning, and have gained an understanding of complex technical problem sets. I am a results-driven technical leader able to perform in high-stakes and high-pressure environments to achieve desired corporate and enterprise objectives. I am looking for opportunities to expand and apply my technical skill set in Cyber Security.
 
 content:
   - title: Projects # Title for the section
@@ -47,19 +45,29 @@ content:
     content:
       - layout: top-middle
         title: To Do List
-        link: github.com/c-velez
+        link: github.com/c-velez/ToDoList
         # link_text: Project Website
         additional_links:
-          - title:  sproogen/modern-resume-theme
+          - title:  To Do List
             icon: fab fa-github
             url: github.com/c-velez/ToDoList
           # - title:  Github page for project (eg. sproogen/modern-resume-theme)
           #   icon: fab fa-github
           #   url: Link to project (eg. sproogen.github.io/modern-resume-theme)
-        quote: >
-          This project was written for a class.
+          #        quote: >
+          #          This project was written for a class.
         description: | # this will include new lines to allow paragraphs
-          Describe the project
+          A Java GUI application that allows users to create a To Do List. Users are able to add items to a list, mark items as complete or incomplete, sort items by date, and view items by completionstatus
+
+      - layout: top-middle
+        title: Inventory Manager
+        link: github.com/c-velez/InventoryManager
+        additional_links:
+          - title: Inventory Manager
+            icon: fab fa-github
+            url: github.com/c-velez/InventoryManager
+        description: |
+          A Java GUI application that allows a user to manage an inventory of items. Users are able to add and delete items, apply prices to items, and attach a unique serial number to each item.
 
   - title: Experience # Title for the section
     layout: list # Type of content section (list/text)
@@ -111,10 +119,7 @@ content:
 
       - layout: top-middle
         title: United States Air Force
-        caption: |
-            May 2016 - November 2016
-            
-            CompTIA Security+ (Oct 2022)
+        caption: May 2016 - November 2016 
         sub_title: Undergraduate Cyber Training
 
       - layout: top-middle
@@ -122,11 +127,58 @@ content:
         caption: August 2008 - December 2012
         sub_title: BSc Aerospace Engineering
 
-  - title: A Little More About Me
-    layout: text
-    content: | # this will include new lines to allow paragraphs
-      Alongside my interests in networks and software engineering some of my other interests and hobbies are:
+  - title: Skills
+    layout: list
+    content:
+      - layout: left
+        title: Languages
+        description: | 
+            - Bash
+            - Python
+            - Java/JUnit 5
+            - UML
 
+      - layout: left
+        title : Tools
+        description: |
+            - IntelliJ
+            - Git
+            - Wireshark
+            - nmap
+            - VMware
+            - Nessus
+            - \*nix
+      - layout: left
+        title: Other
+        description: |
+            - Mitre ATT&CK
+            - Basic Static and Dynamic Malware Analysis
+            - Cryptography
+            - Network Security Monitoring
+                - Zeek
+                - Snort
+            - Log Analysis
+            - NetCat
+            - Virtual Lab Creation - VMware
+            - Agile/SCRUM
+
+      - layout: left
+        title: Extra Curriculars
+        description: |
+            - Hack@UCF
+            - National Cyber League (96th Percentile - Individual)
+            - Hive Storm
+            - NSA CodeBreakers Challenge
+            - SANS Holiday Hack Challenge
+
+#  - title: Other
+#    layout: list
+#    content:
+#        - layout: left
+#          description: |
+#              - <a href="/write_ups/">Write Ups</a>
+#              - <a href="/reading_list.md">Reading List</a>
+#              - <a href="/course_work/">Course Work</a>
 
 # Footer
 footer_show_references: true

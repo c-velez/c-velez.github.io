@@ -7,3 +7,6 @@
 #
 layout: default
 ---
+index.md
+course_work
+    _config.yml
