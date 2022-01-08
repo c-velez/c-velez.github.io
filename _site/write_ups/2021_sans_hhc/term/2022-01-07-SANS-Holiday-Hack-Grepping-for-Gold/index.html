@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Grepping-for-Gold/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="grepping-for-gold">Grepping for Gold</h1>
+
+<p><strong>Objective</strong>: Help Greasy GopherGuts parse nmap output<br />
+<strong>Location</strong>: Outside Jack Frost Tower<br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Grep Cheat Sheet: Check <a href="https://ryanstutorials.net/linuxtutorial/cheatsheetgrep.php">this</a> out if you need a grep refresher.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>It looks like Greasy GopherGuts scanned a large network and needs help parsing the output with grep. Lets click on the terminal and see what we have to work with.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/grepping_for_gold/picture_2.png" alt="Initial Terminal Output" width="750" /></p>
+<p align="center"><strong>Figure 1: Initial Terminal Output</strong></p>
+
+<p>There are series of questions that we need to aswer in order to finish the challenge.</p>
+
+<p>The first 2 questions are relatively straight forward:</p>
+
+<p><strong>Question 1</strong>: What port does 34.76.1.22 have open?<br />
+<strong>Command</strong>: <code class="language-plaintext highlighter-rouge">grep 34.76.1.22 bigscan.gnmap</code><br />
+<strong>Answer</strong>: 62078</p>
+
+<p><strong>Question 2</strong>: What port does 34.77.207.226 have open?<br />
+<strong>Command</strong>: <code class="language-plaintext highlighter-rouge">grep 34.77.207.226 bigscan.gnmap</code><br />
+<strong>Answer</strong>: 8080</p>
+
+<p>Question 3 is going to require some grep/cut/sort/uniq magic:</p>
+
+<p><strong>Question 3</strong>: How many hosts appear “Up” in the scan?<br />
+<strong>Command</strong>: <code class="language-plaintext highlighter-rouge">cat bigscan.gnmap | grep Up | cut -d' ' -f2 | sort -n | uniq | wc -l</code><br />
+<strong>Answer</strong>: 26054</p>
+
+<p>Using the hints in question 4, we can build our command:</p>
+
+<p><strong>Question 4</strong>: How many hosts have a web port open?<br />
+<strong>Command</strong>: <code class="language-plaintext highlighter-rouge">grep -E "(80/open|443/open|8080/open" bigscan.gnmap | wc -l</code><br />
+<strong>Answer</strong>: 14372</p>
+
+<p>Question 5 is a bit tricky. Thinking a bit outside of the box, we can get the answer indirectly but subtracting the number of hosts that are up from the number of hosts that were scanned. We can do the math in the terminal too!</p>
+
+<p><strong>Question 5</strong>: How many hosts with status Up have no (detected) open TCP ports<br />
+<strong>Command</strong>: <code class="language-plaintext highlighter-rouge">echo $((`grep Up bigscan.gnmap | wc -l` - `grep open bigscan.gnmap | wc -l`))</code> <br />
+<strong>Answer</strong>: 402</p>
+
+<p>Finally, the last question! Let’s use some regex to figure this one out. We know that we are looking for the number of times the string “open” occurs in a line since this is how nmap designates when ports are open. So our regex input will look something like <code class="language-plaintext highlighter-rouge">(*/open.*){&lt;some digit&gt;,}</code>. Let’s start with 10. If we get output, we know we need to try a high number, if we don’t get output, we have to go lower. We notice that there are several hosts that have 10 or more ports open, so let’s see if there are any hosts that have 15 ports open. It doesn’t look like there are any hosts that have 15 or more ports open, se we know we have to go lower. Using a binary search method, let’s half the search space between 10 and 15, and try 13. Since no hosts have 13 or more ports open, let’s try 12. And there we go!</p>
+
+<p><strong>Question 6</strong>: Whats the greatest number of TCP ports any one host has open? <br />
+<strong>Command</strong>: <code class="language-plaintext highlighter-rouge">grep -E "(*/open.*){12,}" bigscan.gnmap</code> <br />
+<strong>Answer</strong>: 12</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/grepping_for_gold/picture_3.png" alt="Success" width="750" /></p>
+<p align="center"><strong>Figure 2: Success!</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-3">&lt; Objective 3</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

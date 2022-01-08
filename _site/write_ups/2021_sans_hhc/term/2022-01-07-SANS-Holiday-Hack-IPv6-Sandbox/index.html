@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-IPv6-Sandbox/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="ipv6-sandbox">IPv6 Sandbox</h1>
+
+<p><strong>Objective</strong>: Jewel Loggins needs help mapping out an OPv6 network<br />
+<strong>Location</strong>: Kringle Castle - 2nd Floor<br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>IPv6 Reference: Check out this <a href="https://gist.github.com/chriselgee/c1c69756e527f649d0a95b6f20337c2f">Github Gist</a> with common tools used in an IPv6 context.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>When we open up the terminal, we see what flag we need to find: “Enter the correct phrase to engage the candy striper”.<br />
+Using the hint, we know that we can use ping6 to find the link local addresses for hosts in our network segment.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping6 ff02::1 -c2
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_2.png" alt="Ping Your Neighbors" width="750" /></p>
+<p align="center"><strong>Figure 1: IPv6 Ping Sweep</strong></p>
+
+<p>It looks like we get responses from 3 unique addresses.</p>
+
+<p>Let’s try scanning one of them.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap -6 fe80::42:c0ff:fea8:a002%eth0
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_3.png" alt="Fingerprint the Host" width="750" /></p>
+<p align="center"><strong>Figure 2: Scanning <em>fe80::42:c0ff:fea8:a002</em></strong></p>
+
+<p>It looks like we got some results. Let’s use curl to interrogate the http port on this machine.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl http://[fe80::42:c0ff:fea8:a002]:80/ --interface eth0
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_4.png" alt="cURL the Host" width="750" /></p>
+<p align="center"><strong>Figure 3: Interrogating Port 80 on the Enumerated Host</strong></p>
+
+<p>It looks like we are getting closer! Let’s interrogate the other port that was enumerated to see if we can get the activation phrase for the candy striper!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_5.png" alt="Follow the Instructions" width="750" /></p>
+<p align="center"><strong>Figure 4: Interrogating the Other Port to get the Flag</strong></p>
+
+<p>It looks like all the Candy Striper wants it “PieceOnEarth”! Let’s give it that!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_6.png" alt="Candy Striper Activated" width="750" /></p>
+<p align="center"><strong>Figure 5: Candy Striper Activated</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-5">&lt; Objective 5</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

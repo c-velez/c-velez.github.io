@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Hoho-No/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="hohono">HoHo…No</h1>
+
+<p><strong>Objective</strong>: Eve Snowshoes needs help configuring Fail2Ban to stop attacks on the Kringle Castle network<br />
+<strong>Location</strong>: Santa’s Office<br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>The KringleCon Fail2Ban <a href="https://www.youtube.com/watch?v=Fwv2-uV6e5I">talk</a> is tremendously helpful for this.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>After watching the talk, we know there are a few key things we need to configure:</p>
+<ol>
+  <li>An action definition file - this tells Fail2Ban what to do when a filter criteria is met</li>
+  <li>A jail definition file - this tells Fail2Ban what to do with offending hosts</li>
+  <li>A filter file - this tells Fail2Ban what to look for.</li>
+</ol>
+
+<p>Let’s start with our action file.</p>
+
+<h2 id="action-configuration">Action Configuration</h2>
+
+<p>When we open up the terminal, we are immediately given a set of instructions on how to ban and unban IP addresses</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_1.png" alt="Instructions" width="750" /></p>
+<p align="center"><strong>Figure 1: How to Block IPs</strong></p>
+
+<p>The terminal specifies that to add IP addresses to the block list, we must use <code class="language-plaintext highlighter-rouge">/root/naughtylist add &lt;IP address&gt;</code>, and to take off the block list, we must use <code class="language-plaintext highlighter-rouge">/root/naughtylist del &lt;IP address&gt;</code></p>
+
+<p>With this information we can create our action configuration.</p>
+
+<p>Our action configuration must live in <code class="language-plaintext highlighter-rouge">/etc/fail2ban/action.d</code>. So let’s make a file in there called <code class="language-plaintext highlighter-rouge">hoho_action.conf</code> and populate it:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Definition]
+actionban   = /root/naughtylist add &lt;ip&gt;
+actionunban = /root/naughtylist del &lt;ip&gt;
+</code></pre></div></div>
+
+<p>With this configured, we can move on to our jail</p>
+
+<h2 id="jail-configuration">Jail Configuration</h2>
+
+<p>Along with instructions on how to add and remove offensive IP addresses from the blocklist, we are given a criteria for how many failures within a given amount of time is defined as malicious. Specifically <code class="language-plaintext highlighter-rouge">if an IP generates 10 or more failure messages within an hour, then it must be added to the naughty list</code>.</p>
+
+<p>We have our criteria, let’s make our jail. Our jail configuration must live in <code class="language-plaintext highlighter-rouge">/etc/fail2ban/jail.d</code>, so let’s make a file there called <code class="language-plaintext highlighter-rouge">hoho_jail.conf</code> and populate it:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[hoho_jail]
+enabled  = true                # Enforce this Jail
+logpath  = /var/log/hohono.log # Audit this log
+findtime = 1h                  # Time criteria
+maxretry = 10                  # Maximum number of retries
+bantime	 = 30m                 # How long to ban
+filter   = hoho_filter         # Which filter is associated with this jail
+action   = hoho_action         # Which action configuration file to use
+</code></pre></div></div>
+
+<p>Let’s work on our filter configuration</p>
+
+<h2 id="filter-configuration">Filter Configuration</h2>
+
+<p>Fail2Ban uses what is called <em>failregex</em> to define filters the highlight potentially malicious or anomalous activity.</p>
+
+<p>The filter configuration must live in <code class="language-plaintext highlighter-rouge">/etc/fail2ban/filter.d</code>. Let’s create an empty filter configuraiton with <code class="language-plaintext highlighter-rouge">touch hoho_filter.conf</code>. We will populate it as we find log entries that signify failures.</p>
+
+<p>The <a href="https://fail2ban.readthedocs.io/en/latest/filters.html">documentation</a> is fairly robust, but the information given in the talk is enough to create our filters.</p>
+
+<p>The first thing we need to do is look through the log file to see what key phrases we can use for failure messages in our <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code>.</p>
+
+<p>Doing an intial <code class="language-plaintext highlighter-rouge">cat</code> on the log file, we see a couple of things:</p>
+<ol>
+  <li>There is an entry for valid heartbeats, so a failure for a heartbeat could use the keyword <code class="language-plaintext highlighter-rouge">invalid</code></li>
+  <li>We see general requests that have completed successfully, so we could use <code class="language-plaintext highlighter-rouge">unsuccessful</code> as a keyword to look for general failures</li>
+  <li>We see malformed requests being sent. These could be considered failures as well since the host is failing to connect</li>
+  <li>We see successful logins, so there could feasibly be unsuccessful logins as well</li>
+</ol>
+
+<p>Let’s grep for <code class="language-plaintext highlighter-rouge">invalid</code> first and see what we get:</p>
+
+<p><code class="language-plaintext highlighter-rouge">grep --ignore-case invalid /var/log/hohono.log</code></p>
+
+<p>This produces several <code class="language-plaintext highlighter-rouge">invalid</code> heartbeat log entries.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_2.png" alt="Invalid Heartbeats" width="750" /></p>
+<p align="center"><strong>Figure 2: Invalid Heartbeats</strong></p>
+
+<p>With this, let’s populate <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code> with our first entry.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Definition]
+failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
+</code></pre></div></div>
+
+<p>It is important to note that <code class="language-plaintext highlighter-rouge">failregex</code> already filters through the date time stamp on the log, so we don’t have to generate regex for the timestamp.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">'.*'</code> looks for anything that is between the single quotes, as we want all invalid heartbeats, regardless of what was sent.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">&lt;HOST&gt;</code> keyword tells Fail2Ban where the IP address is within the string, and uses that in the action configuration to act against the IP.</p>
+
+<p>Let’s keep looking for other failures, grepping for <code class="language-plaintext highlighter-rouge">unsuccessful</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grep --ignore-case unsuccessful /var/log/hohono.log
+</code></pre></div></div>
+
+<p>This did not generate any entries, so let’s try <code class="language-plaintext highlighter-rouge">fail</code> as a keyword:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grep --ignore-case fail /var/log/hohono.log
+</code></pre></div></div>
+
+<p>It looks like this keyword produced entries for failed logins for accounts:</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_3.png" alt="Failed Logins" width="750" /></p>
+<p align="center"><strong>Figure 3: Failed Logins</strong></p>
+
+<p>Let’s go back to our <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code> and generate a regex for these entries. I will build upon what we’ve already created to show the evolution of the configuration</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Definition]
+failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
+			Failed login from &lt;HOST&gt; for ([a-z]{1,9})$
+</code></pre></div></div>
+
+<p>I chose <code class="language-plaintext highlighter-rouge">[a-z]{1,9}</code> as the regex filter because the largest username that was used was 9 characters. It is entirely plausible that usernames larger than 9 characters could be used, so this would have to change in a production system. However, this works for this challenge.</p>
+
+<p>Let’s look for malformed requests and generate our regex for these entries</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grep --ignore-case malformed /var/log/hohono.log
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_4.png" alt="Malformed Requests" width="750" /></p>
+<p align="center"><strong>Figure 4: Malformed Requests</strong></p>
+
+<p>A malformed request that is sent could be form of fingerprinting or fuzzing for an actor to get more information about a system, so let’s generate our regex for these entries</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Definition]
+failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
+			Failed login from &lt;HOST&gt; for ([a-z]{1,9})$
+			&lt;HOST&gt; sent a malformed request$
+</code></pre></div></div>
+
+<p>We’ve created regex for 3 out of our four potential filters.</p>
+
+<p>If a username is not correct, it could potentially be rejected, so let’s use that as a keyword:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grep --ignore-case rejected /var/log/hohono.log
+</code></pre></div></div>
+
+<p>And it looks like the hunch is correct:</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_5.png" alt="Rejected Logins" width="750" /></p>
+<p align="center"><strong>Figure 5: Rejected Logins</strong></p>
+
+<p>So our <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code> should now look like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Definition]
+failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
+			Failed login from &lt;HOST&gt; for ([a-z]{1,9})$
+			&lt;HOST&gt; sent a malformed request$
+			Login from &lt;HOST&gt; rejected due to unknown user name$
+</code></pre></div></div>
+
+<h2 id="get-the-ban-hammer">Get the Ban Hammer</h2>
+
+<p>With all of our configurations complete, we can now execute the ban:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># service fail2ban restart
+# /root/naughtylist refresh
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_6.png" alt="Success" width="750" /></p>
+<p align="center"><strong>Figure 6: We've Successfully Defended the Castle</strong></p>
+
+<p>And just like that, we have successfully found all the offensive systems!</p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">&lt; Objective 8</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

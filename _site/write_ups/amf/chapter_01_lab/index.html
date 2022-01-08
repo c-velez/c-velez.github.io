@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/amf/chapter_01_lab/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="art-of-memory-forensic-chapter-1">Art of Memory Forensic Chapter 1</h1>
+
+<p>Question 1: What component assists the CPU in address translation?</p>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />The Memory Management Unit (MMU)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />The Address Translation Unit (ATU)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />The Central Memory Hub (CMH)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />The Memory Management Controller (MMC)</li>
+</ul>
+
+<p>The memory management unit in a computer is responsible for translating virtual memory addresses to physical addresses. (Found in the <code class="language-plaintext highlighter-rouge">CPU and MMU</code> section)</p>
+
+<p>Question 2: When dealing with raw, padded memory dumps, a physical address is an offset into the memory dump file.</p>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />True</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />False</li>
+</ul>
+
+<p>Since we are dealing with the virtual memory of a system, the physical addresses can be calculated using the information gathered from a memory dump. This physical address location could be considered an offset in the memory dump file. (Found in the note under <code class="language-plaintext highlighter-rouge">Address Space</code>)</p>
+
+<p>Question 3: Which statement(s) are false?</p>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />IA32 Architecture is also known as x86</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Physical Address Extension (PAE) allows up to 64GB of physical memory</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />64-bit CPUs only actuall use 52 bits of the available address space</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />A typical page size is 4KB, but it can be larger if the pate size entry (PSE) flag is set</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />All of the above</li>
+</ul>
+
+<p>A 64-bit CPU uses 48 bits of the available address space. Because of this, virtual addresses on these systems are in canonical format, meaning that bits 63:48 are either all 1’s or all 0’s depending on bit 47. (<code class="language-plaintext highlighter-rouge">Intel 64 Architecture</code> section of the chapter)</p>
+
+<p>Question 4: Which CPU register is used to store the directory table base (page directory base)?</p>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />CR0</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />EAX</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />CR3</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />DR3</li>
+</ul>
+
+<p>CR3 contains the physical address of the initial structure used for address translation. During context switches, it is updated when a new task is scheduled. (<code class="language-plaintext highlighter-rouge">Registers</code> section of the chapter)</p>
+
+<p>Question 5: Which statement(s) are true?</p>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Paging allows processes to “see” more RAM than is physically present</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />The page fault handler code must never be paged</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Paging complicates memory forencis because not all data is memory resident at the time of acquisition</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Paging writes potentially valuable volatile evidence to non-volatile storage such as disk</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />All of the above</li>
+</ul>
+
+<p>These ideas are discussed in the <code class="language-plaintext highlighter-rouge">Demand Paging</code> section of the chapter.</p>
+
+<p>Question 6: The winlogon.exe process (PID 628) in sample001.bin has a virtual address 0x77a80000 and DTB value 0x682e000. What is the corresponding physical offset? What do you see at the physical offset within the file?</p>
+
+<p>First convert the virtual address to binary: <br />
+31 | 0111 0111 1010 1000 0000 0000 0000 0000 | 0</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==============================================
+|Paging Structure     | Binary       | Hex   |
+|--------------------------------------------|
+|Page Directory Index | 0111011110   | 0x1DE |
+|Page Table Index     | 1010000000   | 0x280 |
+|Address Offset       | 000000000000 | 0x000 |
+==============================================
+</code></pre></div></div>
+
+<p>ad3d de09</p>
+
+<p>10101101.00111101.11011110.00001001
+173.61.222.9</p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

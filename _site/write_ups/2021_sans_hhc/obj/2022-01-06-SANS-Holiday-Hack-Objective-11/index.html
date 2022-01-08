@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-11/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="customer-complaint-analysis">Customer Complaint Analysis</h1>
+
+<p><strong>Objective</strong>: A human has left a review of the Jack Frost Tower Hotel. The problem is, the reviews are only supposed to be for the trolls to complain about the patrons! Can we figure out which trolls are complaining about the human that left the review?<br />
+<strong>Location</strong>: Jack Frost Tower Talks Lobby<br />
+<strong>Hint Terminal</strong>: <a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Strace-Ltrace-Retrace">Tinsel Upatree</a>  <br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Evil Bit RFC - <a href="https://datatracker.ietf.org/doc/html/rfc3514">RFC3514</a> defines the usage of the “Evil Bit” in IPv4 headers.</li>
+  <li>Wireshark Display Filters - Different from BPF capture filters, Wireshark’s <a href="https://wiki.wireshark.org/DisplayFilters">display filters</a> can find text with the <code class="language-plaintext highlighter-rouge">contains</code> keyword - and evil bits with <code class="language-plaintext highlighter-rouge">ip.flag.rb</code>.</li>
+  <li>Talking to the Pat Tronizer, we know all the valid hosts on their network should be RFC3514 compliant. That is, the evil bit is on.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>Clicking on the objective in the badge, we are given a packet capture file to analyze. Fire up <a href="https://www.wireshark.org/">Wireshark</a>, and let’s get analyzing.</p>
+
+<p>We know that all valid hosts on the network are RFC3514 compliant, so let’s look for the host that isn’t RFC compliant.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip.flags.rb == 0 &amp;&amp; http
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj11/picture_1.png" alt="&quot;Evil&quot; Host" width="750" /></p>
+<p align="center"><strong>Figure 1: The Host That Does Not Belong</strong></p>
+
+<p>It looks like the host <code class="language-plaintext highlighter-rouge">10.70.84.251</code> is the host that does not belong. Looking at the encoded form that was submitted, it appears that the human is in room 1024.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj11/picture_2.png" alt="Poor Human..." width="750" /></p>
+<p align="center"><strong>Figure 2: The Poor Lady Staying at this Hotel...</strong></p>
+
+<p>Let’s take a look at some of the other forms to see if there are any places we can use a key word.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj11/picture_3.png" alt="Room Numbers" width="750" /></p>
+<p align="center"><strong>Figure 3: The Trolls Use the Room Numbers as Client Identifiers</strong></p>
+
+<p>Let’s develop a query to look for url encoded values that contain “1024”.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>urlencoded-form.value contains "1024"
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj11/picture_4.png" alt="Annoyed Trolls" width="750" /></p>
+<p align="center"><strong>Figure 4: The Trolls That Commented on the Pesky Human</strong></p>
+
+<p>Looking through the posted forms, we can see that Flud, Hagg, and Yaqh were the three trolls that complained about the guest in room 1024… they are not happy with her…</p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-10">&lt; Objective 10</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

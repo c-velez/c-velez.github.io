@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-2/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 6, 2022</time>
+
+<h1 id="where-in-the-world-is-caramel-santiago">Where in the World is Caramel Santiago</h1>
+
+<p><strong>Objective</strong>: The goal of this objective is to find a wayward elf. The objective indicates that we should talk to Piney Sappington for hints on how to solve this challenge.<br />
+<strong>Location</strong>: Kringle Castle Courtyard<br />
+<strong>Hint Terminal</strong>: <a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Document-Analysis">Piney Sappington</a><br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Flask Cookies: While Flask cookies can’t generally be forged without the secret, they can often be <a href="https://gist.github.com/chriselgee/b9f1861dd9b99a8c1ed30066b25ff80b">decoded and read</a></li>
+  <li>OSINT Talk: Clay Moody is giving <a href="https://www.youtube.com/watch?v=tAot_mcBT9c">a talk</a> about OSINT techniques right now!</li>
+  <li>Coordinate Systems: Don’t forget coordinate systems other than lat/long like <a href="https://en.wikipedia.org/wiki/Military_Grid_Reference_System">MGRS</a> and <a href="https://what3words.com/">what3words</a></li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>Taking a look at the hint’s, I chose to go down the Flask Cookie path, rather than play the game.<br />
+When you open up the terminal, you are presented with the user interface for the game.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj02/picture_3.png" alt="Game UI" width="750" /></p>
+<p align="center"><strong>Figure 1: Game Interface</strong></p>
+
+<p>Starting the game should initialize the cookie, so let’s open up dev tools and then start the game.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj02/picture_4.png" alt="Game Cookie" width="750" /></p>
+<p align="center"><strong>Figure 2: Game Cookie</strong></p>
+
+<p>Looking at the Flask Cookie hint, the following python script should decode the generated cookie.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/usr/bin/env python3
+
+import zlib
+import itsdangerous
+
+cookie = &lt;cookie&gt;
+
+decoded = zlib.decompress(itsdangerous.base64_decode(cookie))
+
+print(decoded)
+</code></pre></div></div>
+
+<p>The output should give you a JSON similar to this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "elf": "Fitzy Shortstack",
+  "elfHints": [
+    "The elf mentioned something about Stack Overflow and Python.",
+    "Oh, I noticed they had a Firefly themed phone case.",
+    "They kept checking their Twitter app.",
+    "The elf got really heated about using tabs for indents.",
+    "hard"
+  ],
+  "location": "Santa's Castle",
+  "options": [
+    [
+      "Tokyo, Japan",
+      "Reykjav\\u00edk, Iceland",
+      "New York, USA"
+    ],
+    [
+      "Vienna, Austria",
+      "Rovaniemi, Finland",
+      "Prague, Czech Republic"
+    ],
+    [
+      "Prague, Czech Republic",
+      "London, England",
+      "Edinburgh, Scotland"
+    ],
+    [
+      "Placeholder",
+      "Edinburgh, Scotland",
+      "Montr\\u00e9al, Canada"
+    ]
+  ],
+  "randomSeed": 876,
+  "route": [
+    "Reykjav\\u00edk, Iceland",
+    "Vienna, Austria",
+    "Prague, Czech Republic",
+    "Placeholder"
+  ]
+}
+</code></pre></div></div>
+
+<p>In this case, the way the game works is driven by the cookie that is generated. We now know which elf we are looking for, so it’s just a matter of playing the game until we have to make a decision on the elf that is being described.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj02/picture_5.png" alt="We Found the Elf!" width="750" /></p>
+<p align="center"><strong>Figure 3: We Beat the Game Without Playing!</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-1">&lt; Objective 1</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-3">Objective 3 &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

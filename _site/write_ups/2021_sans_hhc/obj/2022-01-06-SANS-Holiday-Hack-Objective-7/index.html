@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-7/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 6, 2022</time>
+
+<h1 id="printer-exploitation">Printer Exploitation</h1>
+
+<p><strong>Objective</strong>: We need to access the printer to see what the last file that was printed was.<br />
+<strong>Location</strong>: Jack Frost Tower - Jack’s Office<br />
+<strong>Hint Terminal</strong>: Shellcode Primer<br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Printer Firmware: When analyzing a device, it’s always a good idea to pick apart the firmware. Sometimes these things come down Base64-encoded.</li>
+  <li>Hash Extension Attacks: <a href="https://blog.skullsecurity.org/2012/everything-you-need-to-know-about-hash-length-extension-attacks">Hash Extension Attacks</a> can be super handy when there’s some type of validation to be circumvented.</li>
+  <li>Dropping files: Files placed in <code class="language-plaintext highlighter-rouge">/app/lib/public/incoming</code> will be accessible under https://printer.kringlecastle.com/incoming/.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>When we click the printer, we are presented with the management UI of the printer. Let’s go ahead and download the firmware</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_1.png" alt="Printer Management Web Console" width="750" /></p>
+<p align="center"><strong>Figure 1: Printer Management Web Console</strong></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_2.png" alt="Firmware Download and Upload Page" width="750" /></p>
+<p align="center"><strong>Figure 2: Firmware Page</strong></p>
+
+<p>The printer provides us with a JSON file with several fields in it. As hint one suggests, the firmware itself is base64 encoded. Additionally, we see that there is a signature that relates to what ever is encoded, as well as a secret length and hashing algorithm. Taking a look at hint 2, we know that this is all the information we need to conduct a hash extension attack. So we’ll proceed with that attack vector</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_3.png" alt="Original Firmware Blob" width="750" /></p>
+<p align="center"><strong>Figure 3: Original Firmware Blob</strong></p>
+
+<p>Decode the firmware field and put it in it’s own file.</p>
+
+<p><code class="language-plaintext highlighter-rouge">echo "&lt;base64 encoded string&gt;" &gt; encoded &amp;&amp; cat encoded | base64 -d &gt; original_firmware</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_4.png" alt="Original Firmware Zip File" width="750" /></p>
+<p align="center"><strong>Figure 4: Original Firmware Zip File</strong></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">original_firmware</code> file that we create should contain the binary firmware. Running file against it, we see that it is a zip file. Let’s rename the file and unzip it.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mv original_firmware firmware.zip &amp;&amp; unzip firmware.zip
+</code></pre></div></div>
+
+<p>We can make a few educated guesses here on what the printer expects when firmware is uploaded.</p>
+<ol>
+  <li>It gave us a json, so it probably expects a json file</li>
+  <li>The firmware field was base64 encoded, so it is probably expecting a base64 encoded string in the firmware field</li>
+  <li>The json file should probably also contain a signature, a secret_length, and hashing algorithm</li>
+  <li>When the printer decodes the string, it is expecting a zip file, so our payload probably needs to be zipped.</li>
+  <li>The printer probably appends the 16 byte secret to the zip file to validate the signature.</li>
+  <li>The printer is probably looking for <code class="language-plaintext highlighter-rouge">firmware.bin</code> inside of the zip file.</li>
+  <li>The printer will execute the firmware</li>
+</ol>
+
+<p>Knowing all of this and hint 3, let’s construct our payload.</p>
+
+<p>The objective requires us to get the name of the last file that was printed from the printer. The spool log can be found at <code class="language-plaintext highlighter-rouge">/var/spool/printer.log</code>.</p>
+
+<p>Let’s create our payload, and make it executable.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo "cat /var/spool/printer.log &gt; /app/lib/public/incoming/m4ntle_printer.log" &gt; firmware.bin &amp;&amp; 
+chmod +x firmware.bin
+</code></pre></div></div>
+
+<p>The next step is to zip it up. Let’s zip it up using another name other than <code class="language-plaintext highlighter-rouge">firmware.zip</code>, since we need <code class="language-plaintext highlighter-rouge">firmware.zip</code> for the hash extension attack.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zip payload.zip firmware.bin
+</code></pre></div></div>
+
+<p>Time to construct our hash_extender command. For this, reading is ABSOLUTELY FUNDAMENTAL, as there are several options that will be needed in order to craft this correctly.</p>
+
+<p><strong>I placed the hash_extender binary in my path to simplify execution. Explanation of this is outside the scope of this write up.</strong></p>
+
+<p>Running <code class="language-plaintext highlighter-rouge">hash_extender --help</code> we see several options:</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_8.png" alt="Hash Extender Options" width="750" /></p>
+<p align="center"><strong>Figure 5: Hash Extender Options</strong></p>
+
+<p>The main ones we need to concern ourselves with are <code class="language-plaintext highlighter-rouge">--file</code>, <code class="language-plaintext highlighter-rouge">--secret</code>, <code class="language-plaintext highlighter-rouge">--append</code>, <code class="language-plaintext highlighter-rouge">--append-format</code>, <code class="language-plaintext highlighter-rouge">--signature</code>, <code class="language-plaintext highlighter-rouge">--format</code>, and <code class="language-plaintext highlighter-rouge">--out-data-format</code></p>
+
+<p>We want to append our zipped payload to the zipped firmware. Feeding the <code class="language-plaintext highlighter-rouge">secret_length</code> found in the original json, we use that as our input to <code class="language-plaintext highlighter-rouge">--secret</code>. We want to append the hex format of our <code class="language-plaintext highlighter-rouge">payload.zip</code>. <code class="language-plaintext highlighter-rouge">-p</code> removes the offsets of the hexdump and <code class="language-plaintext highlighter-rouge">-c 999999999</code> ensures that the output is continuous without newline chacters. We pass hash_extender the original signature so it can match the length of the secret. We pass it the hashing algorithm we found in the original json, and we want our output to be in hex form.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hash_extender --file firmware.zip --secret 16 --append `xxd -p -c 9999999999 payload.zip` 
+--append-format hex --signature 2bab052bf894ea1a255886fde202f451476faba7b941439df629fdeb1ff0dc97 
+--format sha256 --out-data-format hex
+</code></pre></div></div>
+
+<p>Running the above results in:</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_9.png" alt="Hash Extender Output" width="750" /></p>
+<p align="center"><strong>Figure 6: Hash Extender Output</strong></p>
+
+<p>Time to build our json</p>
+
+<p>First we need to encode our new string. Let’s use the Cyber Chef recipe From Hex to Base64. Something to note is that are new base64 encoded string is eerily similar to the original base64 encoded string. This is because we are just appending data to the end of the original file we received.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_10.png" alt="Cyber Chef Recipe" width="750" /></p>
+<p align="center"><strong>Figure 7: Cyber Chef Recipe</strong></p>
+
+<p>The base64 output from Cyber Chef will live in the firmware field of our crafted json and the new signature generated from our <code class="language-plaintext highlighter-rouge">hash_extender</code> command will live in the signature field of our crafted json. Secret length and algorithm will be the same as the original json.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_11.png" alt="Original to New Comparison" width="750" /></p>
+<p align="center"><strong>Figure 8: Comparing the Original JSON Blob to Our Crafted JSON Blob</strong></p>
+
+<p>Time to see if this actually worked! Let’s go ahead and upload our crafted json to the printer.</p>
+
+<p>It looks like it landed!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_13.png" alt="Upload Successful" width="750" /></p>
+<p align="center"><strong>Figure 9: Upload Successful</strong></p>
+
+<p>Browsing to http://printer.kringlecastle.com/incoming/m4ntle_printer.log we see that script executed successfully!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_1.png" alt="Printer.log" width="750" /></p>
+<p align="center"><strong>Figure 10: Printer.log</strong></p>
+
+<p>Answer: Troll_Pay_Chart.xlsx</p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-6">&lt; Objective 6</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">Objective 8 &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

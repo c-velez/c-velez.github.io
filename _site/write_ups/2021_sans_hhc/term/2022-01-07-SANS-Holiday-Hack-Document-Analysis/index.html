@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Document-Analysis/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="document-analysis">Document Analysis</h1>
+
+<p>Piney Sappington needs our help!</p>
+
+<p>It seems someone has tampered with Santa’s Files.</p>
+
+<p>Let’s click on the terminal to have a look.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/document_analysis/picture_1.png" alt="Document Terminal" width="750" /></p>
+<p align="center"><strong>Figure 1: Document Terminal</strong></p>
+
+<p>It looks like we need to find out which record Jack Frost has modified. Luckily exiftool is installed on the terminal.</p>
+
+<p>exiftool is a tool that allows you to analyze the metadata of a file. This includes creation times, access times, modification time, and a load of other metadata.</p>
+
+<p>Let’s go ahead and run <code class="language-plaintext highlighter-rouge">exiftool * | less</code>. This command will run exiftool against all files in the current directory, and pipe the output to less.
+You can search in less by inputting <code class="language-plaintext highlighter-rouge">/&lt;search term&gt;</code>. In our case, let’s search for <code class="language-plaintext highlighter-rouge">Jack</code></p>
+
+<p>It looks like Jack modified the file before 2021-12-22.docx.</p>
+
+<p>Let’s go ahead and verify this by running <code class="language-plaintext highlighter-rouge">exiftool 2021-12-21.docx</code></p>
+
+<p>Looking at the bottom of the output, we can indeed see that Jack Frost modified 2021-12-21.docx.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/document_analysis/picture_3.png" alt="We Found Jack Frost" width="750" /></p>
+<p align="center"><strong>Figure 2: We Found Jack Frost!</strong></p>
+
+<p>Let’s validate this by entering this answer to the top terminal of the RPi terminal.
+And just like that we found the correct document!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/document_analysis/picture_5.png" alt="Success" width="750" /></p>
+<p align="center"><strong>Figure 3: Success!</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-2">&lt; Objective 2</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

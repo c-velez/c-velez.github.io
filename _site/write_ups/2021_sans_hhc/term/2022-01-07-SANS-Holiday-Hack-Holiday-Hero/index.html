@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Holiday-Hero/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="holiday-hero">Holiday Hero</h1>
+
+<p><strong>Objective</strong>: We need to power up Santa’s Sleigh<br />
+<strong>Location</strong>: Netwars - Roof of Kringle Castle<br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Chimney Scissorsticks says that there is a way to enable single player mode.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>Click the sleigh and create a room. It looks like we need to play the game in order to charge Santa’s Sleigh. Let’s snoop around to see what we can find.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_1.png" alt="Main Menu" width="750" /></p>
+<p align="center"><strong>Figure 1: Holiday Hero Main Menu</strong></p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_2.png" alt="Instructions" width="750" /></p>
+<p align="center"><strong>Figure 2: How to Play Holiday Hero</strong></p>
+
+<p>Opening up dev tools in Chrome, browse to the sources to get a glimpse of the game engine</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_3.png" alt="Read the Source Code" width="750" /></p>
+<p align="center"><strong>Figure 3: Holiday Hero Code</strong></p>
+
+<p>Reading the source carefully, we see code block that appears to be related to making Player 2 a computer. The condition is that <code class="language-plaintext highlighter-rouge">single_player_mode</code> must be true.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_4.png" alt="Interesting Code Block" width="750" /></p>
+<p align="center"><strong>Figure 4: Interesting Code Block</strong></p>
+
+<p>Let’s go to the console and see if we can manipulate that variable. Make sure you are in the right context for the variable. By default, dev tools in chrome is in the context of the top most window. We can change this by selecting the drop down and moving to <code class="language-plaintext highlighter-rouge">hero.kringlecastle.com</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_6.png" alt="Dropdown" width="750" /></p>
+<p align="center"><strong>Figure 5: Make Sure The Context is Right</strong></p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_5.png" alt="Set the Variable" width="750" /></p>
+<p align="center"><strong>Figure 6: Enable Single Player Mode</strong></p>
+
+<p>It looks like we have activated single player mode as the player 2 computer has shown up!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_7.png" alt="Computer Player is Set!" width="750" /></p>
+<p align="center"><strong>Figure 7: Player 2 has Entered the Game!</strong></p>
+
+<p>Now toggle player 1 on and get that sleigh fueled up!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_8.png" alt="Player 1 Ready" width="750" /></p>
+<p align="center"><strong>Figure 8: Player 1 Ready</strong></p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/holiday_hero/picture_9.png" alt="Rock On" width="750" /></p>
+<p align="center"><strong>Figure 9: Rock On!</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-6">&lt; Objective 6</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

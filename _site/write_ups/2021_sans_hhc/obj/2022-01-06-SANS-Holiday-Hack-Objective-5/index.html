@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-5/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 6, 2022</time>
+
+<h1 id="strange-usb-device">Strange USB Device</h1>
+
+<p><strong>Objective</strong>: One of the Elves found a strange USB device and they need our help to figure out what it does<br />
+<strong>Location</strong>: Kringle Castle - 2nd Floor Speaker UNPreparation Room<br />
+<strong>Hint Terminal</strong>: <a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-IPv6-Sandbox">Jewel Loggins</a><br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Ducky Script - <a href="https://docs.hak5.org/hc/en-us/articles/360010555153-Ducky-Script-the-USB-Rubber-Ducky-language">Ducky Script</a> is the language for the USB Rubber Ducky</li>
+  <li>Duck Encoder - Attackers can encode Ducky Script using a <a href="https://docs.hak5.org/hc/en-us/articles/360010471234-Writing-your-first-USB-Rubber-Ducky-Payload">duck encoder</a></li>
+  <li>Mitre ATT&amp;CK and Ducky - The <a href="https://attack.mitre.org/techniques/T1098/004/">MITRE ATT&amp;CK tactice T1098.004</a> describes SSH persistence techniques thought authorized keys files.</li>
+  <li>Ducky RE with Mallard - It’s also possible to reverse engineer encoded Ducky Script using <a href="https://github.com/dagonis/Mallard">Mallard</a></li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>Let’s pop open the terminal and see what we have to work with</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_1.png" alt="Initial Terminal Output" width="750" /></p>
+<p align="center"><strong>Figure 1: Initial Terminal Output</strong></p>
+
+<p>It looks like we’ll have to evaluate a USB device and answer a series of flags for this objective!</p>
+
+<p>Taking a look at <code class="language-plaintext highlighter-rouge">/mnt/USBDEVICE</code> we see there is a file there called inject.bin. Let’s go ahead and copy that file to our home directory where mallard.py lives.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cp /mnt/USBDEVICE/inject.bin ~/
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_2.png" alt="Copy File" width="750" /></p>
+<p align="center"><strong>Figure 2: Copy the File to the Home Directory</strong></p>
+
+<p>Let’s run <code class="language-plaintext highlighter-rouge">mallard.py</code> against the <code class="language-plaintext highlighter-rouge">inject.bin</code> to see what the decoded output looks like.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./mallard.py --file inject.bin
+</code></pre></div></div>
+
+<p>It looks like it worked! We see the routine that the inject.bin file contains. It looks like someone was enumerating the user and attempting to call back to <code class="language-plaintext highlighter-rouge">trollfun.jackfrosttower.com/1337</code>. There’s also a base64 encoded string with a series of commands that were used to generate it.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_3.png" alt="Mallard Output" width="750" /></p>
+<p align="center"><strong>Figure 3: Mallard Decoded Output</strong></p>
+
+<p>Let’s do some decoding. We see that the string was encoded, and then reversed. Looking at the actual command, we should be able to copy and paste it in to the terminal and get the decoded output</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_4.png" alt="Decode Suspect String" width="750" /></p>
+<p align="center"><strong>Figure 4: Decode the Suspicous String!</strong></p>
+
+<p>It looks like we found the culprit!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_4.png" alt="The Culprit" width="750" /></p>
+<p align="center"><strong>Figure 5: The Culprit</strong></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Answer:</td>
+      <td> </td>
+      <td>Icky McGoop</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-4">&lt; Objective 4</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-6">Objective 6 &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

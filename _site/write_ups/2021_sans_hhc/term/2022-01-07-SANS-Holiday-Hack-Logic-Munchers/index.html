@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Logic-Munchers/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="logic-munchers">Logic Munchers</h1>
+
+<p><strong>Objective</strong>: Beat the Trollogs!<br />
+<strong>Location</strong>: Outside of Kringle Castle<br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Boolean Logic: There are lots of special symbols for logic and set notation. This one (http://notes.imt-decal.org/sets/cheat-sheet.html) covers AND, NOT, and OR at the bottom.</li>
+  <li>AND, OR, NOT, XOR: This (http://www.natna.info/English/Teaching/CSI30-materials/Chapter1-cheat-sheet.pdf) might be a handy reference too.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>Let’s speak with Noel Boetie outside of Kringle Castle.</p>
+
+<p>It looks like we have to play a game that involves boolean logic. In order for the task to be complete, we have to beat the game in the Potpourri setting at Stage 3 (Intermediate) or higher.</p>
+
+<p>Let’s see what this is about.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/logic_munchers/picture_2.png" alt="Game UI" width="750" /></p>
+<p align="center"><strong>Figure 1: Play Logic Chompers with Intermediate and Potpourri Settings</strong></p>
+
+<p>Set the appropriate settings and start the game!</p>
+
+<p>Boolean Algebra Primer:
+Boolean logic using binary operation to determine states of given conditions.<br />
+The main operators in boolean logic are AND, OR, NOT, and XOR.</p>
+<ul>
+  <li>AND (&amp;, &amp;&amp;): All must be true in order for the output to be true, otherwise, the output is false</li>
+  <li>OR (|, ||): At least one must be true in order for the output to be true, otherwise the output is false</li>
+  <li>NOT(~, !): If the input is true, the output is false. If the input is false, the output is true</li>
+  <li>XOR(^): Only one input must be true in order for the output to be true, otherwise the output is false</li>
+  <li>Here is a truth table for all of the above operations (1 is TRUE, 0 is FALSE):</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>		===========================================
+		| a | b | a &amp; b | a || b | ~a | !b | a ^ b|
+		|-----------------------------------------|
+		| 0 | 0 |   0   |   0    |  1 |  1 |   0  |
+		| 0 | 1 |   0   |   1    |  1 |  0 |   1  |
+		| 1 | 0 |   0   |   1    |  0 |  1 |   1  |
+		| 1 | 1 |   1   |   1    |  0 |  0 |   0  |
+		===========================================
+</code></pre></div></div>
+
+<p>Binary operators allow you to do bit shifts when programming. The 2 that we should be concerned with are left shift («) and right shift (»).</p>
+<ul>
+  <li>Left shift:
+    <ul>
+      <li>a « b means to take the binary input of a and shift the bit b times.
+        <ul>
+          <li>Example
+            <ul>
+              <li>a = 3, b = 2</li>
+              <li>a « b -&gt; 3 « 2 -&gt; 0011 « 2 -&gt; 1100</li>
+              <li>If b = 1, the output would be 0110, since we are onl shifting one time.</li>
+            </ul>
+          </li>
+          <li>In this case, we are not doing a cyclic shift, so the bits fall off the end</li>
+          <li>Example:
+            <ul>
+              <li>a = 9, b = 2</li>
+              <li>a « b -&gt; 9 « 2 -&gt; 1001 « 2 -&gt; 0100</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Right shift
+    <ul>
+      <li>a » b means to take the binary input of a and shift it b times
+        <ul>
+          <li>Example:
+            <ul>
+              <li>a = 12, b = 2</li>
+              <li>a » b -&gt; 12 » 2 -&gt; 1100 » 2 -&gt; 0011</li>
+              <li>If b = 1, the output would be 0110</li>
+            </ul>
+          </li>
+          <li>In this case, we are not doing a cyclic shift, so the bits call off the end</li>
+          <li>Example:
+            <ul>
+              <li>a = 3, b = 2</li>
+              <li>a » b -&gt; 3 » 2 -&gt; 0011 » 2 -&gt; 0000<br />
+With all of the above information, you should be able to more complex examples that you may face in the challenge:</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/img/2021_sans_hhc/term/logic_munchers/picture_3.png" alt="Example Problems" width="750" /></p>
+<p align="center"><strong>Figure 2: Example Problem Sets</strong></p>
+<p align="center">Solutions for the above samples below~</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	2^^3 = 8 is True
+	30 &gt; 10 is True
+	10 % 5 = 3 is False
+	33 / 15 = 2 is True
+	12 / 1 = 12 is True
+	4^^2 = 20 is false
+	(not False and False) and (True) is False
+	1^^3 = 3 is false
+	1 = 1 is true
+	0x04 ^ 0x01 = 0x05 is True
+	(not False) or (not True or True) is True
+	0b0011 ^ 0b10000 = 0b10011 is True
+	(True and False) or (False and False) is False
+	(True or True) or (True or False) is True
+	4 - 23 = -17 is false
+	(1 = 0) or (not True) is False
+	5^^3 = 125 is True
+	2^3 = 16 is False
+	0x0c || 0x06 = 0x0c is False
+	3 + 29 = 32 is True
+	0x0e &lt;&lt; 3 = 0x70 is False
+	0x08 ^ 0x10 = 0x18 is true
+	(False or True) or (not True and False) is True
+	17 &gt;= 7 is True
+	not False or False is True
+	True is True
+	0b1011 &gt;&gt; 3 = 0b0011 is false
+	0x04 &gt;&gt; 2 = 0x05 is false
+</code></pre></div></div>
+
+<p>Good luck and watch out for the Trollogs!</p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-4">&lt; Objective 4</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

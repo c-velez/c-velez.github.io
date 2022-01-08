@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-9/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="splunk">Splunk</h1>
+
+<p><strong>Objective</strong>: One of the Elves has recently left the job. We need to figure out the work they have been doing… or do we? 
+<strong>Location</strong>: The Great Room<br />
+<strong>Hint Terminal</strong>: <a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Yara-Analysis">Fitzy Shortstack</a><br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Sysmon Monitoring in Splunk - Sysmon network events don’t reveal the process parent ID for example. Fortunately, we can pivot with a query to investigate process creation event once you get a process ID</li>
+  <li>Malicious NetCat?? Did you know there are multiple versions of the Netcat command that can be used maliciously? <code class="language-plaintext highlighter-rouge">nc.openbsd</code>, for example.</li>
+  <li>Github Monitoring in Splunk - Between Github audit log and webhook event recording, you can monitor all activity in a repository, including common <code class="language-plaintext highlighter-rouge">git</code> commands such as <code class="language-plaintext highlighter-rouge">git add</code>, <code class="language-plaintext highlighter-rouge">git status</code>, and <code class="language-plaintext highlighter-rouge">git commit</code>.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>This challenge will help introduce us to git monitoring with Splunk. We’ll have to answer a series of questions to get the whole story on what Eddie has been up to…</p>
+
+<h3 id="task-1">Task 1</h3>
+
+<p>“Capture the commands Eddie ran most often, starting with git. Looking only at his process launches as reported by Sysmon, record the most common git-related CommandLine that Eddie seemed to use.”</p>
+
+<p>In short, we have to figure what git command Eddie liked to use the most.</p>
+
+<p>Let’s build our query using template number 1:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational 
+process_name="/usr/bin/git" EventDescription="Process creation"
+</code></pre></div></div>
+
+<p>Selecting “CommandLine”, we can see that Eddie ran <code class="language-plaintext highlighter-rouge">git status</code> the most.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_1.png" alt="Task 1 Query" width="750" /></p>
+<p align="center"><strong>Figure 1: Task 1 Query</strong></p>
+
+<h3 id="task-2">Task 2</h3>
+
+<p>“Looking through the git commands Eddie ran, determine the remote repository that he configured as the origin for the <code class="language-plaintext highlighter-rouge">partnerapi</code> repo. The correct one!”</p>
+
+<p>Pivoting from our previous query, let’s look for all <code class="language-plaintext highlighter-rouge">CommandLine</code> execution where the <code class="language-plaintext highlighter-rouge">CurrentDirectory</code> contains <code class="language-plaintext highlighter-rouge">partnerapi</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main source="Journald:Microsoft-Windows-Sysmon/Operational" 
+process_name="/usr/bin/git" EventDescription="Process creation" 
+CommandLine="*partnerapi*"
+</code></pre></div></div>
+
+<p>Looking at the CommandLine values again, we see that Eddie used <code class="language-plaintext highlighter-rouge">git@github.com:elfnp3/partnerapi.git</code> as the origin for the <code class="language-plaintext highlighter-rouge">partnerapi</code> repo.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_2.png" alt="Task 2 Query" width="750" /></p>
+<p align="center"><strong>Figure 2: Task 2 Query</strong></p>
+
+<h3 id="task-3">Task 3</h3>
+
+<p>“The ‘partnerapi’ project that Eddie worked on uses Docker. Gather the full dockercommand line that Eddie used to start the ‘partnerapi’ project in his workstation.”</p>
+
+<p>Since we are still searching for command line operations, we can edit our query in Task 2 to search for instances of “docker” in the command line parameter. We’ll also have to change the process name to docker.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main source="Journald:Microsoft-Windows-Sysmon/Operational" 
+process_name="/usr/bin/docker" EventDescription="Process creation" 
+CommandLine="*docker*"
+</code></pre></div></div>
+
+<p>Eddie used the command <code class="language-plaintext highlighter-rouge">docker compose up</code> to start the docker container.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_3.png" alt="Task 3 Query" width="750" /></p>
+<p align="center"><strong>Figure 3: Task 3 Query</strong></p>
+
+<h3 id="task-4">Task 4</h3>
+
+<p>“Eddie had been testing automated static application security testing (SAST) in GitHub. Vulnerability reports have been coming into Splunk in JSON format via GitHub webhooks. Search all the events in the main index in Splunk and use the sourcetype field to locate these reports. Determine the name of the vulnerable GitHub repository that the elves cloned for testing and document it here. Inspect the repository.name field in Splunk.”</p>
+
+<p>For this query, we will have to switch our sourcetype, and then inspect the <code class="language-plaintext highlighter-rouge">repository.name</code> field as suggested by the question, to figure out which vulnerable repository was used.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main source="github_json"
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">dvws-node</code> repository was the one that was cloned for testing</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_4.png" alt="Task 4 Query" width="750" /></p>
+<p align="center"><strong>Figure 4: Task 4 Answer</strong></p>
+
+<h3 id="task-5">Task 5</h3>
+
+<p>“Santa asked Eddie to add a JavaScript library from NPM to the ‘partnerapi’ project. Determine the name of the library and record it here for our workshop documentation.”</p>
+
+<p>In order to install a JavaScript library with npm, we would use <code class="language-plaintext highlighter-rouge">node npm install &lt;library&gt;</code>. Let’s look for command line instances of <code class="language-plaintext highlighter-rouge">npm install</code> in our main index.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main source="Journald:Microsoft-Windows-Sysmon/Operational" CommandLine="*npm install*" 
+CommandLine="*"
+</code></pre></div></div>
+
+<p>The above query produces a promising result. It looks like Eddie installed the <code class="language-plaintext highlighter-rouge">holiday-utils-js</code> library.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_5.png" alt="Task 5 Query" width="750" /></p>
+<p align="center"><strong>Figure 5: Task 5 Query</strong></p>
+
+<h3 id="task-6">Task 6</h3>
+
+<p>“Another elf started gathering a baseline of the network activity that Eddie generated. Start with their search and capture the full process_name field of anything that looks suspicious.”</p>
+
+<p>The query that was given to us definitely looks for all of Eddie’s network activity.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=3 
+user=eddie NOT dest_ip IN (127.0.0.*) NOT dest_port IN (22,53,80,443) | stats count by dest_ip 
+dest_port
+</code></pre></div></div>
+
+<p>Reviewing the processes that generated the activity, it appears that <code class="language-plaintext highlighter-rouge">/usr/bin/nc.openbsd</code>, a known malicious process, was seen generating activity in the network. Uh oh…</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_6.png" alt="Task 6 Query" width="750" /></p>
+<p align="center"><strong>Figure 6: Task 6 Results</strong></p>
+
+<h3 id="task-7">Task 7</h3>
+
+<p>“Uh oh. This documentation exercise just turned into an investigation. Starting with the process identified in the previous task, look for additional suspicious commands launched by the same parent process. One thing to know about these Sysmon events is that Network connection events don’t indicate the parent process ID, but Process creation events do! Determine the number of files that were accessed by a related process and record it here.”</p>
+
+<p>The first thing we need to do is find the process that executed <code class="language-plaintext highlighter-rouge">/usr/bin/nc.openbsd</code>. We can do this by searching for all instances with the <code class="language-plaintext highlighter-rouge">process_name="/usr/bin/nc.openbsd</code>, and then looking at the parent process id of the executed program.</p>
+
+<p>Our full query looks like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational 
+process_name="/usr/bin/nc.openbsd" parent_process_id="*"
+</code></pre></div></div>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_7.png" alt="Task 7 PPID" width="750" /></p>
+<p align="center"><strong>Figure 7: Parent Process ID of <em>nc.openbsd</em></strong></p>
+
+<p>It appears that <code class="language-plaintext highlighter-rouge">/bin/bash</code> is the culprit, so let’s pivot form here to see how many files were accessed.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational 
+process_name="/bin/bash"
+</code></pre></div></div>
+
+<p>Looking at the <code class="language-plaintext highlighter-rouge">file_name</code> field on the left side, we can see that this process accessed <code class="language-plaintext highlighter-rouge">6</code> files in the <code class="language-plaintext highlighter-rouge">/tmp/</code> directory. Threat actors are known to stage malicious files in this directory.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_8.png" alt="Task 7 Questionable Files" width="750" /></p>
+<p align="center"><strong>Figure 8: Questional Files Accessed by <em>/bin/bash</em></strong></p>
+
+<h3 id="task-8">Task 8</h3>
+
+<p>“Use Splunk and Sysmon Process creation data to identify the name of the Bash script that accessed sensitive files and (likely) transmitted them to a remote IP address.”</p>
+
+<p>For this task, we will have to look at the parent process of the shell that was created. Using our first query in Task 7, we know that the shell process that was spun up was <code class="language-plaintext highlighter-rouge">6788</code>. With this information we can find the parent process id.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational 
+process_id="6788" parent_process_id="*"
+</code></pre></div></div>
+
+<p>The above query generates one result. This record shows that process <code class="language-plaintext highlighter-rouge">6784</code> generated the malicious shell. Additionally, we can look at the <code class="language-plaintext highlighter-rouge">ParentCommandLine</code> field to determine what command invoked the shell. It appears the that <code class="language-plaintext highlighter-rouge">/bin/bash preinstall.sh</code> script is the malicious script.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_9.png" alt="Task 8 Malicious Script" width="750" /></p>
+<p align="center"><strong>Figure 9: Got'em</strong></p>
+
+<h3 id="success">Success</h3>
+
+<p>Find the malicious script, Santa is apparently impressed with our skill and calls us a <code class="language-plaintext highlighter-rouge">whiz</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj09/picture_10.png" alt="Success" width="750" /></p>
+<p align="center"><strong>Figure 10: Impressed Santa</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">&lt; Objective 8</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-10">Objective 10 &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

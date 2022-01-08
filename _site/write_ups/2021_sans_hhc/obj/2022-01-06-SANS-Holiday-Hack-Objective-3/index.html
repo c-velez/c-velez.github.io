@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-3/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 6, 2022</time>
+
+<h1 id="thaw-frost-towers-entrance">Thaw Frost Tower’s Entrance</h1>
+
+<p><strong>Objective</strong>: The goal of Objective 3 is to gain access to Jack Frost Tower by melting the front door<br />
+<strong>Location</strong>: Outside Jack Frost Tower<br />
+<strong>Hint Terminal</strong>: <a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Grepping-for-Gold">Greasy Gopherguts</a><br />
+<strong>Hints</strong>:</p>
+<ol>
+  <li>Linux Wi-Fi Commands THe <a href="https://linux.die.net/man/8/iwlist">iwlist</a> and <a href="https://linux.die.net/man/8/iwconfig">iwconfig</a> utilities are key for managing Wi-Fi from the Linux command line</li>
+  <li>Web Browsing with cURL: <a href="https://linux.die.net/man/1/curl">cURL</a> makes HTTP requests from a terminal - in Mac, Linux, and modern Windows!</li>
+  <li>Adding Data to cURL requests: When sending a POST request with <a href="https://www.educative.io/edpresso/how-to-perform-a-post-request-using-curl">data</a>, add –data-binary to your curl command followed by the data you want to send.</li>
+</ol>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>Approaching Jack Frost Tower, we can see that the entrance is frozen shut.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_2.png" alt="Frozen Door" width="750" /></p>
+<p align="center"><strong>Figure 1: Jack Tower's Frozen Door</strong></p>
+
+<p>It looks like Grimy McTrollkins is frozen out of Jack Frost Tower and needs help getting back in. Talking to them, nudges us to use the Wi-Fi dongle we collected during Objective 1. Let’s open up a prompt for the dongle (badge &gt; Items &gt; Open WiFi CLI).</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_3.png" alt="Wi-Fi Dongle CLI" width="750" /></p>
+<p align="center"><strong>Figure 2: Wi-Fi Dongle CLI</strong></p>
+
+<p>After the prompt is loaded we see that iwlist and iwconfig are installed in the terminal.</p>
+
+<p>Looking at the man page for iwlist, it looks like there is a scanning option that will give us a list of Access Points that are in range. All we need is the interface to use, so lets run <code class="language-plaintext highlighter-rouge">iwconfig</code> to get that.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_5.png" alt="`iwconfig` Output" width="750" /></p>
+<p align="center"><strong>Figure 3: <em>iwconfig</em> Output</strong></p>
+
+<p>We see our only interface is <code class="language-plaintext highlighter-rouge">wlan0</code>, so lets craft our scan command.</p>
+
+<p><code class="language-plaintext highlighter-rouge">iwlist wlan0 scanning</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_6.png" alt="`iwlist` Scan Results" width="750" /></p>
+<p align="center"><strong>Figure 4: <em>iwlist</em> Scan Results</strong></p>
+
+<p>Looking at the output, we have the radio information for the wireless thermostat in the building, including the ESSID “FROST-Nidus-Setup”.</p>
+
+<p>Reading the man page for <code class="language-plaintext highlighter-rouge">iwconfig</code> it looks like we can connect to the network using the <code class="language-plaintext highlighter-rouge">essid</code> option. Let’s run <code class="language-plaintext highlighter-rouge">iwconfig wlan0 essid FROST-Nidus-Setup</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_7.png" alt="Successful Connection!" width="750" /></p>
+<p align="center"><strong>Figure 5: Thermostat Connection</strong></p>
+
+<p>It looks like we have successfully associated with the thermostat. Lets do some recon!</p>
+
+<p>Running <code class="language-plaintext highlighter-rouge">curl http://nidus-setup:8080/</code>, we are met with a nice landing area and places to go from here. We want to increase the temperature of the thermostat, surely there is an api command for that….</p>
+
+<p>Let’s check the api docs with <code class="language-plaintext highlighter-rouge">curl htpp://nidus-setup:8080/apidoc</code></p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_11.png" alt="Read the Docs" width="750" /></p>
+<p align="center"><strong>Figure 6: Nidus Thermostat API Calls</strong></p>
+
+<p>It looks like we can access the cooler api without registering the device. The output of the API doc gives us a lot of clues including the command to run as well as a temperature threshold, so let’s try setting the temperature to something a little more comfortable…</p>
+
+<p><code class="language-plaintext highlighter-rouge">curl -XPOST -H 'Content-Type: application/json' --data-binary '{"temperature": 70}' http://nidus-setup:8080/api/cooler</code></p>
+
+<p>It looks like we got a warning!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_9.png" alt="API Output" width="750" /></p>
+<p align="center"><strong>Figure 7: Defrosting....</strong></p>
+
+<p>And the door is now open!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/obj/obj03/picture_10.png" alt="Open Sesame!" width="750" /></p>
+<p align="center"><strong>Figure 7: Defrosted Door</strong></p>
+
+<p>Let’s go see what mischief Jack Frost is conducting on this holiday season!</p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-2">&lt; Objective 2</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-4">Objective 4 &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Strace-Ltrace-Retrace/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="http://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+ 
+<li><a href="/home/">Home</a></li>
+  
+<li><a href="/resume/">Resume</a></li>
+  
+<li><a href="/contact/">Contact</a></li>
+  
+<li><a href="/courses/">Course Work</a></li>
+                                                 
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 7, 2022</time>
+
+<h1 id="strace-ltrace-retrace">strace ltrace retrace</h1>
+
+<p><strong>Objective</strong>: The candy machine is broken! Someone reloaded the software, but it can’t find the registration file. We’ll have to recreate it using strace and ltrace<br />
+<strong>Location</strong>: Kringle Castle Kitchen<br />
+<strong>Hints</strong>:</p>
+<ul>
+  <li>None</li>
+</ul>
+
+<h2 id="write-up">Write Up</h2>
+
+<p>strace and ltrace are tools that trace the execution of a program. It can allow developers to see where their programs are failing. In this context, we can use strace and ltrace to see how and why the candy machine software is failing.</p>
+
+<p>We’ll start by running the program to see the output.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_1.png" alt="Execution Failed" width="750" /></p>
+<p align="center"><strong>Figure 1: The Candy Maker Can't Find the Config</strong></p>
+
+<p>Running the program confirms that it is looking for a configuration file, but it can’t find one.</p>
+
+<p>Running <code class="language-plaintext highlighter-rouge">ltrace ./make_the_candy</code>, we see that the program is looking for a <code class="language-plaintext highlighter-rouge">registration.json</code> file to read. So, let’s give it what it wants. We’ll make a <code class="language-plaintext highlighter-rouge">registration.json</code> file and fill it with garbage.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_2.png" alt="Trying to Open `registration.json`" width="750" /></p>
+<p align="center"><strong>Figure 2: Trying to Open <em>registration.json</em></strong></p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_3.png" alt="Create the File it is Looking For" width="750" /></p>
+<p align="center"><strong>Figure 3: Create the File the Program is Looking For</strong></p>
+
+<p>Running the program after creating the registration file, we see that the program is looking for the term <code class="language-plaintext highlighter-rouge">Registration</code> inside of the file. We know this because of the call to the <code class="language-plaintext highlighter-rouge">strstr()</code> function. This function takes 2 arguments, the first argument is the string that is found, the second argument is the string it is looking for. The function returns a pointer to the beginning of the substring (the second argument) if it is found. If it doesn’t find the substring, it returns <code class="language-plaintext highlighter-rouge">NULL</code>.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_4.png" alt="Registration File Contents" width="750" /></p>
+<p align="center"><strong>Figure 4: The Program is Looking for the String <em>Registration</em></strong></p>
+
+<p>Let’s edit our registration file to make the word <code class="language-plaintext highlighter-rouge">Registration</code> the key, for the key, value pair.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_5.png" alt="Edit the Key" width="750" /></p>
+<p align="center"><strong>Figure 5: Updated Contents of <em>registration.json</em></strong></p>
+
+<p>Running the program with the editted configuration file still yields an unregistered error. Let’s run <code class="language-plaintext highlighter-rouge">ltrace</code> against the program again and take a look at the output.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_6.png" alt="What Value?" width="750" /></p>
+<p align="center"><strong>Figure 6: <em>ltrace</em> Output After Editing the File Contents</strong></p>
+
+<p>The program uses the <code class="language-plaintext highlighter-rouge">strstr()</code> function again to look for the value <code class="language-plaintext highlighter-rouge">True</code>, after <code class="language-plaintext highlighter-rouge">Registration</code> within the file. Editing the <code class="language-plaintext highlighter-rouge">registration.json</code> with a key:value pair of <code class="language-plaintext highlighter-rouge">Registration:True</code>, should yield us good results.</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_7.png" alt="New File Contents" width="750" /></p>
+<p align="center"><strong>Figure 7: Updated Key:Value Pair in the Registration File</strong></p>
+
+<p>And it looks like our execution was successful!</p>
+
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_8.png" alt="New File Contents" width="750" /></p>
+<p align="center"><strong>Figure 8: We've Created the Correct Registration File</strong></p>
+
+<hr />
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-11">&lt; Objective 11</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>
