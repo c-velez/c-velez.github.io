@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Splunk"
 date: 2022-01-07 14:07 -500
 categories: jekyll update
 ---

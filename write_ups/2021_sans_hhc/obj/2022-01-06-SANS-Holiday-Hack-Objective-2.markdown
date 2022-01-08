@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Where in the World is Caramel Santiago"
 date: 2022-01-06 20:54 -500
 categories: jekyll update
 ---

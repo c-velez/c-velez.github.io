@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: Thaw Frost Tower's Entrance
 date: 2022-01-06 21:05 -500
 categories: jekyll update
 ---

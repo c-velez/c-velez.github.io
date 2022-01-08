@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Now Hiring!"
 date: 2022-01-08 09:39 -500
 categories: jekyll update
 ---

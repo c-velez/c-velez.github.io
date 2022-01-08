@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Customer Complaint Analysis"
 date: 2022-01-07 21:42 -500
 categories: jekyll update
 ---

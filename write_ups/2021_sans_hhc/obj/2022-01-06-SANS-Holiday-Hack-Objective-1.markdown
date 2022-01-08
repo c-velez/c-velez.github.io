@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: KringleCon Orientation
 date: 2022-01-06 19:51 -500
 categories: jekyll update
 ---

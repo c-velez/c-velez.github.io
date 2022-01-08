@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Shellcode Primer"
 date: 2022-01-06 21:47 -500
 categories: jekyll update
 ---

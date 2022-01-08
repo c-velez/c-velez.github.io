@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Strange USB Device"
 date: 2022-01-06 21:37 -500
 categories: jekyll update
 ---

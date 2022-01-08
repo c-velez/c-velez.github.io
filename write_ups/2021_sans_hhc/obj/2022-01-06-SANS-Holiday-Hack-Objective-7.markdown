@@ -1,6 +1,5 @@
 ---
 layout: post
-# title: "Kerberoasting on an Open Fire"
 date: 2022-01-06 08:15:26 -500
 categories: jekyll update
 ---
