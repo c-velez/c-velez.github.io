@@ -1,8 +1,7 @@
 ---
 layout: page
 title: "Course Work"
-date: 2022-01-07 20:51 -500
-categories: jekyll update
+permalink: /courses/
 ---
 
 # Courses
