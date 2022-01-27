@@ -12,24 +12,32 @@ Christopher Velez
 
 Experience
 ----------
-P3F
-Threat Hunter
-Jun 2020 - Apr 2021
+University of Central Florida   
+Deskside Support Technician   
+Aug 2021 - Present
+:   * Responsible for the support of 1,200+ end points spanning the College of Sciences, University Research & two other departments
+    * Worked with customer to generate lab requirements for 10+ unique labs; configured & deployed 40+ lab machines for research
+    * Determined roles and access needed for all devices; ensured least privilege access through group policy orchestration
+    * Configured pilot development machine for Data Science Lab; documented steps to configure Anaconda environment in Windows
+
+P3F   
+Threat Hunter   
+Jun 2020 - Apr 2021   
 :   * Security operations and threat hunting subject matter expert; developed ground up processes and procedures for client security operations center
     * Led client through monitoring and alerting strategy via Mitre ATT&CK matrix; verified data sources and updated/created queries
     * Tailored 150 out-of-box Elastic Alerts for client environment; worked with SIEM on-boarding team to create custom parsers for 5 log sources
     * Worked with Information System Security Engineer to validate 10 Red Team findings; tested fixes implemented by development team
 
-United States Air Force
-Deputy Chief, Mission Management
-Jun 2018 - Dec 2019
+United States Air Force   
+Deputy Chief, Mission Management   
+Jun 2018 - Dec 2019  
 :   * Directed more than 60-member cross-functional team to enable access for national security operations
     * Managed 24/7 watch office; required specialized training and access to conduct operations against high value targets
     * Used networking knowledge, risk management, and exploitation methodology to advice high level network operators
 
-United States Air Force
-Commander, Cyberspace Threat Intelligence Center
-Nov 2016 - Jun 2018
+United States Air Force   
+Commander, Cyberspace Threat Intelligence Center   
+Nov 2016 - Jun 2018   
 :   * Built and codified new Air Force mission, leading more than 60-member multi-disciplined team in cyberspace threat intelligence
     * Demonstrated effective collaboration with customers; technical intelligence reporting resulted in over 400 defensive network actions
     * Developed actionable intelligence reporting team; integrated intelligence with technical data tailored for responders and executives
@@ -93,8 +101,9 @@ Other:
     * Agile/SCRUM
 
 Extra Curriculars
-:   * Hack@UCF
-    * National Cyber League (96th Percentile - Individual)
+:   * UCF Collegiate Cybersecurity Competition Team, CCDC Member
+    * Collegiate Cyber Defense Club @ UCF, Operations Team
+    * National Cyber League (Top 4%)
     * HiveStorm
     * NSA Codebreakers Challenge
     * SANS Holiday Hack Challenge
