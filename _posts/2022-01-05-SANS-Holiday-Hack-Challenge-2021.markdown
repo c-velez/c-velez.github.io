@@ -31,7 +31,6 @@ I recommend starting at objective one; however, you are free to do as you wish b
 - [Objective  7: Printer Exploitation](/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-7)  
 - [Objective  8: Kerberoasting](/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8)  
 - [Objective  9: Splunk](/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-9)  
-- Objective 10: Now Hiring! (Under construction)  
 - [Objective 11: Customer Complaint Analysis](/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-11)  
 
 ### Terminal Challenges
