@@ -1,4 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-01-08T13:46:23-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Mind Palace</title><subtitle>A space for learning and thought</subtitle><entry><title type="html">2021 SANS Holiday Hack Challenge Write Up</title><link href="http://localhost:4000/2021-SANS-Holiday-Hack-Challenge/" rel="alternate" type="text/html" title="2021 SANS Holiday Hack Challenge Write Up" /><published>2022-01-05T00:00:00-05:00</published><updated>2022-01-05T00:00:00-05:00</updated><id>http://localhost:4000/SANS-Holiday-Hack-Challenge-2021</id><content type="html" xml:base="http://localhost:4000/2021-SANS-Holiday-Hack-Challenge/"><![CDATA[<h1 id="2021-sans-holiday-hack-challenge-write-up">2021 SANS Holiday Hack Challenge Write-Up</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-02-22T10:15:58-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Mind Palace</title><subtitle>A space for learning and thought</subtitle><entry><title type="html">Practical Malware Analysis Write Ups</title><link href="http://localhost:4000/practical-malware-analysis/" rel="alternate" type="text/html" title="Practical Malware Analysis Write Ups" /><published>2022-01-31T00:00:00-05:00</published><updated>2022-01-31T00:00:00-05:00</updated><id>http://localhost:4000/Practical-Malware-Analysis</id><content type="html" xml:base="http://localhost:4000/practical-malware-analysis/"><![CDATA[<h1 id="practical-malware-analysis">Practical Malware Analysis</h1>
+
+<p>The next couple of months and posts will focus on my journey in to learning malware analysis. Currently I am enrolled in a Malware Analysis Course at University. The course will cover topics in basic static and dynamic analysis techniques, as well as Reverse Engineering and Debugging. To help enhance our learning, the required reading is the <a href="http://nostarch.com/malware"><em>Practical Malware Analysis</em></a> book by Andrew Honig and Michael Sikorski.</p>
+
+<p>This series of posts will serve as a way to document my learning, using the exercises in the book as a vehicle for discovery. My intent is not to post homework solutions, but rather to display what I am learning and what I have learned. The layout of these posts will be by chapter (if the chapter has exercises, they will be represented in these posts) in a question, explanation, answer report form.</p>
+
+<p>I hope you find this informative and insightful. Please feel free to reach out with any questions or suggestions!</p>
+
+<h2 id="write-ups">Write Ups</h2>
+<ul>
+  <li><a href="/write_ups/pma/ch01/chapter_01_lab">Chapter 01: Basic Static Techniques</a></li>
+  <li>Chapter 03: Basic Dynamic Techniques</li>
+  <li>Chapter 05: IDA Pro</li>
+  <li>Chapter 06: Recognizing C Code Constructs in Assembly</li>
+  <li>Chapter 07: Analyzing Malicious Windows Programs</li>
+  <li>Chapter 09: OllyDbg</li>
+  <li>Chapter 10: Kernel Debugging with WinDbg</li>
+  <li>Chapter 11: Malware Behavior</li>
+  <li>Chapter 12: Covert Malware Launching</li>
+  <li>Chapter 13: Data Encoding</li>
+  <li>Chapter 14: Malware Focused Network Signatures</li>
+  <li>Chapter 15: Anti-Disassembly</li>
+  <li>Chapter 16: Anti-Debugging</li>
+  <li>Chapter 17: Anti-Virtual Machine Techniques</li>
+  <li>Chapter 18: Packers and Unpacking</li>
+  <li>Chapter 19: Shell Code Analysis</li>
+  <li>Chapter 20: C++ Analysis</li>
+  <li>Chapter 21: 64-Bit Malware</li>
+</ul>]]></content><author><name></name></author><summary type="html"><![CDATA[Practical Malware Analysis]]></summary></entry><entry><title type="html">2021 SANS Holiday Hack Challenge Write Up</title><link href="http://localhost:4000/2021-SANS-Holiday-Hack-Challenge/" rel="alternate" type="text/html" title="2021 SANS Holiday Hack Challenge Write Up" /><published>2022-01-05T00:00:00-05:00</published><updated>2022-01-05T00:00:00-05:00</updated><id>http://localhost:4000/SANS-Holiday-Hack-Challenge-2021</id><content type="html" xml:base="http://localhost:4000/2021-SANS-Holiday-Hack-Challenge/"><![CDATA[<h1 id="2021-sans-holiday-hack-challenge-write-up">2021 SANS Holiday Hack Challenge Write-Up</h1>
 
 <p>This Christmas Season (2021) Jack Frost is back and he is up to no good again! It looks like Jack has decided to start his on Conference next to KringleCon. Who knows what devious things is up to in order to sabotage KringleCon. We need to help Santa save Christmas by completing a series of cyber security related challenges!</p>
 
@@ -26,7 +54,6 @@
   <li><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-7">Objective  7: Printer Exploitation</a></li>
   <li><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">Objective  8: Kerberoasting</a></li>
   <li><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-9">Objective  9: Splunk</a></li>
-  <li>Objective 10: Now Hiring! (Under construction)</li>
   <li><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-11">Objective 11: Customer Complaint Analysis</a></li>
 </ul>
 
