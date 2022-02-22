@@ -192,3 +192,66 @@ When running strings against this file, a reference to what appears to be an IP 
 
 7. What would you guess is the purpose of these files?
 The purpose of these files is likely to install and run a backdoor. We know this because `CreateProcess` and `Sleep` are commonly used functions in backdoors. Additionally, the IP address that was found in the `dll` implies command and control functionality. Additionally, looking at the strings for the `.exe`, we see references to the `dll`. The `exe` likely looks for and/or installs the `dll`, replaces `kernel32.dll` with the `dll` as `kerne132.dll`, and then executes it.
+
+---
+
+## Lab 1-2:
+
+### File Metadata:
+
+**Filename**: `Lab01-02.exe`   
+**MD5**: `8363436878404da0ae3e46991e355b83`   
+
+### Questions:
+
+1. Upload the `Lab01-02.exe` file to [Virus Total](https://www.virustotal.com). Does it match any existing antivirus definitions?
+
+2. Are there any indications that this file is packed or abfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.
+
+3. Do any imports hint at this program's functionality? If so, which imports are they and what do they tell you?
+
+4. What host or network-based indicators could be used to identify this malware on infected machines?
+
+---
+
+## Lab 1-3:
+
+### File Metadata:
+
+**Filename**: `Lab01-03.exe`   
+**MD5**: `9c5c27494c28ed0b14853b346b113145`   
+
+### Questions:
+
+1. Upload the file to [Virus Total](https://virustotal.com). Does it match any existing antivirus definitions?
+
+2. Are there any indications that this file is packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.
+
+3. Do any imports hint at this program's functionality? If so, which imports are they and what do they tell you?
+
+4. What host or network-based indicators could be used to identify this malware on infected machiens?
+
+---
+
+## Lab 1-4
+
+### File Metadata:
+
+**Filename**: `Lab01-04.exe`   
+**MD5**: `624ac05fd47adc3c63700c3b30de79ab`   
+
+### Questions:
+
+1. Upload the file to [Virus Total](https://virustotal.com). Does it match any existing antivirus definitions?
+
+2. Are there any indications that this file is packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.
+
+3. When was this program compiled?
+
+4. Do any imports hint at this program's functionality? If so, which imports are they and what do they tell you?
+
+5. What host or network-based indicators could be used to identify this malware or infected machines?
+
+6. This file has one resource in the resource section. Use Resource Hacker to examine that resource, and then use it to extract the resource. What can you learn from the resource?
+
+---
