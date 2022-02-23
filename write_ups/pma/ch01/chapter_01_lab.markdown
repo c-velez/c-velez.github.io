@@ -36,17 +36,17 @@ For [`Lab01-01.exe`](https://www.virustotal.com/gui/file/58898bd42c5bd3bf9b1389f
 ![Lab01-01.exe Virus Total 01](/assets/img/pma/ch01/picture_01.JPG){: width="750"}
 <p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-01.exe</em></strong></p>
 - The majority of the anti-virus engines that recognize this executable characterize it as a `Trojan`
-![Lab01-01.exe Virus Total 02](/assets/img/pma/ch01/picture_02.jpg){: width="750"}
+![Lab01-01.exe Virus Total 02](/assets/img/pma/ch01/picture_02.JPG){: width="750"}
 <p align="center"><strong>Figure 2: Virus Total AV Engine Characterization for <em>Lab01-01.exe</em></strong></p>
 
 For [`Lab01-01.dll`](https://www.virustotal.com/gui/file/f50e42c8dfaab649bde0398867e930b86c2a599e8db83b8260393082268f2dba/detection):
 
 - Virustotal indicates that 41 anti-virus engines flag this binary as malicious
 - Virustotal recognizes this hash to be associated with `Lab01-01.dll`
-![Lab01-01.dll Virus Total 01](/assets/img/pma/ch01/picture_03.jpg){: width="750"}
+![Lab01-01.dll Virus Total 01](/assets/img/pma/ch01/picture_03.JPG){: width="750"}
 <p align="center"><strong>Figure 3: Virus Total Detection Summary for <em>Lab01-01.dll</em></strong></p>
 - The majority of the anti-virus engines also characterize this dll as a `Trojan`
-![Lab01-01.dll Virus Total 02](/assets/img/pma/ch01/picture_04.jpg){: width="750"}
+![Lab01-01.dll Virus Total 02](/assets/img/pma/ch01/picture_04.JPG){: width="750"}
 <p align="center"><strong>Figure 4: Virus Total AV Engine Characterization for <em>Lab01-01.dll</em></strong></p>
    
 **Q2. When were the files compiled?**     
@@ -57,12 +57,12 @@ We can use PEview's `Image File Header` to understand the compile time for each 
    
 **File**: `Lab01-01.exe`   
 **Compile Time**: 2010/12/19 Sun 16:16:19 UTC
-![Lab01-01.exe Compile Time](/assets/img/pma/ch01/picture_05.jpg){: width="750"}
+![Lab01-01.exe Compile Time](/assets/img/pma/ch01/picture_05.JPG){: width="750"}
 <p align="center"><strong>Figure 5: Compile Time for <em>Lab01-01.exe</em> using PEview</strong></p>
    
 **File**: `Lab01-01.dll`   
 **Compile Time**: 2010/12/16 Sun 16:16:38 UTC   
-![Lab01-01.dll Compile Time](/assets/img/pma/ch01/picture_06.jpg){: width="750"}
+![Lab01-01.dll Compile Time](/assets/img/pma/ch01/picture_06.JPG){: width="750"}
 <p align="center"><strong>Figure 6: Compile Time for <em>Lab01-01.dll</em> using PEview</strong></p>
    
 **Q3. Are there any indications that either of these files is packed or obfuscated? If so, what are these indicators?**    
@@ -79,15 +79,15 @@ We will walk through all of the above methods for both files in this lab.
 **Packed**: No
 **Analysis**:
 - PEiD: Loading the file in to PEiD, the program recognizes that `Lab01-01.exe` was compiled using `Microsoft Visual C++ 6.0`
-![Lab01-01.exe Packed Analysis PEiD](/assets/img/pma/ch01/picture_07.jpg){: width="750"}
+![Lab01-01.exe Packed Analysis PEiD](/assets/img/pma/ch01/picture_07.JPG){: width="750"}
 <p align="center"><strong>Figure 7: PEiD Output for <em>Lab01-01.exe</em></strong></p>
 - Strings: We can also see in the strings output that there are several readable strings, including file paths and messages, in this executable
-![Lab01-01.exe Strings Analysis](/assets/img/pma/ch01/picture_08.jpg){: width="750"}
+![Lab01-01.exe Strings Analysis](/assets/img/pma/ch01/picture_08.JPG){: width="750"}
 <p align="center"><strong>Figure 8: Truncated Strings Output for <em>Lab01-01.exe</em></strong></p>
 - Imports: Using dependency walker, we can take a look at the import table for this file. It should be noted that the strings output above also shows what the file imports.
-![Lab01-01.exe Packed Analysis DepWalker 01](/assets/img/pma/ch01/picture_09.jpg){: width="750"}
+![Lab01-01.exe Packed Analysis DepWalker 01](/assets/img/pma/ch01/picture_09.JPG){: width="750"}
 <p align="center"><strong>Figure 9: Dependency Walker Output for <em>Lab01-01.exe</em> - <em>kernel32.dll</em></strong></p>
-![Lab01-01.exe Packed Analysis DepWalker 02](/assets/img/pma/ch01/picture_10.jpg){: width="750"}
+![Lab01-01.exe Packed Analysis DepWalker 02](/assets/img/pma/ch01/picture_10.JPG){: width="750"}
 <p align="center"><strong>Figure 10: Dependency Walker Output for <em>Lab01-01.exe</em> - <em>msvcrt.dll</em></strong></p>
 - Header Information: Pulling the file up in PEview again, we can talk a look at the `.text` section header information to view the reported size on disk (`Raw Size`) and the reported size in memory (`Virtual Size`). The `Virtual Size` (0x0970) and `Raw Size` (0x1000) are mostly the same size. The differ by 0x0690 bytes. Additionally, the `Virtual Size` is not larger than the `Raw Size`, indicating that the file is not packed.
    
@@ -97,17 +97,17 @@ Using the above information, we can determine that the file is not packed. The m
 **Packed**: No   
 **Analysis**:
 - PEid: Loading the file in to PEiD, the program recognizes that `Lab01-01.dll` was compiled using `Microsoft Visual C++ 6.0`
-![Lab01-01.dll Packed Analysis PEiD](/assets/img/pma/ch01/picture_11.jpg){: width="750"}
+![Lab01-01.dll Packed Analysis PEiD](/assets/img/pma/ch01/picture_11.JPG){: width="750"}
 <p align="center"><strong>Figure 11: PEiD Output for <em>Lab01-01.dll</em></strong></p>
 - Strings: We can see the strings produces a readable output, including was appears to be a hardcoded IP address: `127.26.152.13`
-![Lab01-01.dll Strings Analysis](/assets/img/pma/ch01/picture_12.jpg){: width="750"}
+![Lab01-01.dll Strings Analysis](/assets/img/pma/ch01/picture_12.JPG){: width="750"}
 <p align="center"><strong>Figure 12: Strings Output for <em>Lab01-01.dll</em></strong></p>
 - Imports: Of note, Figure 14 below only shows the ordinals of the functions that were called. We can find out what the binary actually imports by looking at the table directly below the import table.   
-![Lab01-01.dll DepWalker 01](/assets/img/pma/ch01/picture_13.jpg){: width="750"}
+![Lab01-01.dll DepWalker 01](/assets/img/pma/ch01/picture_13.JPG){: width="750"}
 <p align="center"><strong>Figure 13: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>kernel32.dll</em></strong></p>
-![Lab01-01.dll DepWalker 02](/assets/img/pma/ch01/picture_14.jpg){: width="750"}
+![Lab01-01.dll DepWalker 02](/assets/img/pma/ch01/picture_14.JPG){: width="750"}
 <p align="center"><strong>Figure 14: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>ws2_32.dll.dll</em></strong></p>
-![Lab01-01.dll DepWalker 03](/assets/img/pma/ch01/picture_15.jpg){: width="750"}
+![Lab01-01.dll DepWalker 03](/assets/img/pma/ch01/picture_15.JPG){: width="750"}
 <p align="center"><strong>Figure 15: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>msvcrt.dll.dll</em></strong></p>
 - Header Information: Pulling up the file in PEview, we can look at the `.text` section header. The `Virtual Size` (0x039E) and `Raw Size` (0x1000) differ quite a bit, but the `Virtual Size` is not larger than the `Raw Size`, indicating that this file is not packed.
    
