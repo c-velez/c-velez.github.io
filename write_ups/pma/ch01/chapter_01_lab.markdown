@@ -5,7 +5,7 @@ date: 2022-01-28 10:41 -500
 categories: jekyll update
 ---
 
-# Practical Malware Analysis Chapter 1
+# Practical Malware Analysis Ch01
 
 This chapter discusses techniques for basic static malware analysis. The binary structure of PE files can give a lot of information. This includes import and export tables, strings, resources used by the binary, and any obfuscation that may be used to prevent analysis. Often times, basic static analysis allows analysts to have a jumping off point for deeper analysis.
 
