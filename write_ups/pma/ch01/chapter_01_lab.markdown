@@ -193,7 +193,7 @@ The purpose of these files is likely to install and run a backdoor. We know this
 
 ---
 
-## Lab 1-1:
+## Lab 1-2:
 
 ### File Metadata:
 
