@@ -33,7 +33,7 @@ For [`Lab01-01.exe`](https://www.virustotal.com/gui/file/58898bd42c5bd3bf9b1389f
 
 - Virustotal indicates that 48 anti-virus engines flag this binary as malicious
 - Virustotal recognizes this hash to be associated with `Lab01-01.exe`
-![Lab01-01.exe Virus Total 01](/assets/img/pma/ch01/picture_01.jpg){: width="750"}
+![Lab01-01.exe Virus Total 01](/assets/img/pma/ch01/picture_01.JPG){: width="750"}
 <p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-01.exe</em></strong></p>
 - The majority of the anti-virus engines that recognize this executable characterize it as a `Trojan`
 ![Lab01-01.exe Virus Total 02](/assets/img/pma/ch01/picture_02.jpg){: width="750"}
