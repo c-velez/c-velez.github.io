@@ -33,7 +33,7 @@ process_name="/usr/bin/git" EventDescription="Process creation"
 
 Selecting "CommandLine", we can see that Eddie ran `git status` the most.
 
-![Task 1 Query](/assets/img/2021_sans_hhc/obj/obj09/picture_1.png){: width="750"}
+![Task 1 Query](/assets/img/2021_sans_hhc/obj/obj09/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 1: Task 1 Query</strong></p>
 
 ### Task 2
@@ -166,9 +166,9 @@ The above query generates one result. This record shows that process `6784` gene
 
 Find the malicious script, Santa is apparently impressed with our skill and calls us a `whiz`
 
-![Success](/assets/img/2021_sans_hhc/obj/obj09/picture_10.png){: width="750"}
+![Success](/assets/img/2021_sans_hhc/obj/obj09/picture_10.PNG){: width="750"}
 <p align="center"><strong>Figure 10: Impressed Santa</strong></p>
 
 
 ---
-<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">< Objective 8</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-10">Objective 10 ></a></p>
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">< Objective 8</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up ></a></p>

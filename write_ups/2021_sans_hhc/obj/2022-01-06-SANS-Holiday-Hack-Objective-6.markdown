@@ -20,7 +20,7 @@ Ruby Cyster seems to think that someone is trying to learn how to hack the North
 
 When we first open the terminal, we are greeted with some introductory instructions.
 
-![Welcome](/assets/img/2021_sans_hhc/obj/obj06/picture_1.png){: width="750"}
+![Welcome](/assets/img/2021_sans_hhc/obj/obj06/picture_1.ONG){: width="750"}
 <p align="center"><strong>Figure 1: Welcome Training Interface</strong></p>
 
 The primer walks you through Tasks 1 to 10, so we won't spend time on those. Task 11 is a capstone that rolls up everyting that should have been learned in the previous tasks, with a little bit of extra, so we'll skip right to task 11.
@@ -94,7 +94,7 @@ Now all that is left is writing to stdout and closing out cleanly. We'll accompl
 At this point, we'll learn the secret to KringleCon success!
 
 
-![Santa's Message](/assets/img/2021_sans_hhc/obj/obj06/picture_2.png){: width="750"}
+![Santa's Message](/assets/img/2021_sans_hhc/obj/obj06/picture_2.PNG){: width="750"}
 <p align="center"><strong>Figure 2: Santa's Message</strong></p>
 
 Answer: Secret to KringleCon success: all of our speakers and organizers, providing the gift of CYBER SECURITY KNOWLEDGE, free to the community.

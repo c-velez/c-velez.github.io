@@ -42,4 +42,4 @@ I recommend starting at objective one; however, you are free to do as you wish b
 - [Holiday Hero](/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Holiday-Hero)  
 - [Hoho...No](/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Hoho-No)  
 - [Yara Analysis](/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Yara-Analysis)  
-- [strace ltrace retrace](/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-strace-ltrace-retrace)  
+- [strace ltrace retrace](/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Strace-Ltrace-Retrace)  

