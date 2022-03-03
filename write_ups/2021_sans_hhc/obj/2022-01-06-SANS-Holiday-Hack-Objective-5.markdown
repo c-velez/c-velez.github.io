@@ -51,7 +51,7 @@ Let's do some decoding. We see that the string was encoded, and then reversed. L
 
 It looks like we found the culprit!
 
-![The Culprit](/assets/img/2021_sans_hhc/obj/obj05/picture_4.pPNG){: width="750"}
+![The Culprit](/assets/img/2021_sans_hhc/obj/obj05/picture_4.PNG){: width="750"}
 <p align="center"><strong>Figure 5: The Culprit</strong></p>
 
 Answer: ||Icky McGoop||

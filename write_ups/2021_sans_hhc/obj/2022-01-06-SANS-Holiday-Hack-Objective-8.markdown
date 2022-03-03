@@ -454,7 +454,7 @@ And now we should have access to the share!
 
 Now that we are added to the `Research Department` group, let's try to access the `research_dep` share with our unprivileged user account.
 
-![Successful Access to Research Share](/assets/img/2021_sans_hhc/obj/obj08/picture_24.PNG){: width="750"}
+![Successful Access to Research Share](/assets/img/2021_sans_hhc/obj/obj08/picture_24.png){: width="750"}
 <p align="center">
     <strong>Figure 24: Successful Access to Research Share</strong>
 </p>
