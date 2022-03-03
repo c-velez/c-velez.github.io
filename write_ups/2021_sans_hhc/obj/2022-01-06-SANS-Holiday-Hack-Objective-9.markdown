@@ -171,4 +171,4 @@ Find the malicious script, Santa is apparently impressed with our skill and call
 
 
 ---
-<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">< Objective 8</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up ></a></p>
+<p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-8">< Objective 8</a> :: <a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-11">Objective 11 ></a></p>

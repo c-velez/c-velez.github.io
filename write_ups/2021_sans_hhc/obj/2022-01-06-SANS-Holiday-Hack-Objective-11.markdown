@@ -24,7 +24,7 @@ We know that all valid hosts on the network are RFC3514 compliant, so let's look
 ip.flags.rb == 0 && http
 ```
 
-!["Evil" Host](/assets/img/2021_sans_hhc/obj/obj11/picture_1.png){: width="750"}
+!["Evil" Host](/assets/img/2021_sans_hhc/obj/obj11/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 1: The Host That Does Not Belong</strong></p>
 
 It looks like the host `10.70.84.251` is the host that does not belong. Looking at the encoded form that was submitted, it appears that the human is in room 1024.
