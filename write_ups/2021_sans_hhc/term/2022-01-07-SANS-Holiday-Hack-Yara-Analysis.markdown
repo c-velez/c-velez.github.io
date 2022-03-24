@@ -169,7 +169,7 @@ Looking up the documentation for `unint32(1)`, we can note that this rule tells 
 <p align="center">Notice how the hex appears to be "backwards" when compared to the rule <br>
 	<em>454c4602</em> versus <em>02464c45</em> as defined in the rule</p>
 
-![After Editing](/assets/img/2021_sans_hhc/term/yara_analysis/picture_10.png){: width="750"}
+![After Editing](/assets/img/2021_sans_hhc/term/yara_analysis/picture_11.PNG){: width="750"}
 <p align="center"><strong>Figure 11: Changing <em>02</em> to <em>00</em> Should do the Trick</strong></p>
 
 ### Success
@@ -178,8 +178,8 @@ We have been able to successfully execute `the_critical_elf_app` in the environm
 
 Luckily, we caught this one quick ;)
 
-![Full Bypass](/assets/img/2021_sans_hhc/term/yara_analysis/picture_10.png){: width="750"}
-<p align="center"><strong>Figure 11: Success Full Bypass of All Yara Rules</strong></p>
+![Full Bypass](/assets/img/2021_sans_hhc/term/yara_analysis/picture_12.PNG){: width="750"}
+<p align="center"><strong>Figure 12: Success Full Bypass of All Yara Rules</strong></p>
 
 ---
 <p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-9">< Objective 9</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up ></a></p>
