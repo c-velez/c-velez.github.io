@@ -25,7 +25,7 @@ Let's start with our action file.
 
 When we open up the terminal, we are immediately given a set of instructions on how to ban and unban IP addresses
 
-![Instructions](/assets/img/2021_sans_hhc/term/hoho_no/picture_1.png){: width="750"}
+![Instructions](/assets/img/2021_sans_hhc/term/hoho_no/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 1: How to Block IPs</strong></p>
 
 The terminal specifies that to add IP addresses to the block list, we must use `/root/naughtylist add <IP address>`, and to take off the block list, we must use `/root/naughtylist del <IP address>`
@@ -83,7 +83,7 @@ Let's grep for `invalid` first and see what we get:
 
 This produces several `invalid` heartbeat log entries.
 
-![Invalid Heartbeats](/assets/img/2021_sans_hhc/term/hoho_no/picture_2.png){: width="750"}
+![Invalid Heartbeats](/assets/img/2021_sans_hhc/term/hoho_no/picture_2.PNG){: width="750"}
 <p align="center"><strong>Figure 2: Invalid Heartbeats</strong></p>
 
 With this, let's populate `hoho_filter.conf` with our first entry.
@@ -112,7 +112,7 @@ grep --ignore-case fail /var/log/hohono.log
 
 It looks like this keyword produced entries for failed logins for accounts:
 
-![Failed Logins](/assets/img/2021_sans_hhc/term/hoho_no/picture_3.png){: width="750"}
+![Failed Logins](/assets/img/2021_sans_hhc/term/hoho_no/picture_3.PNG){: width="750"}
 <p align="center"><strong>Figure 3: Failed Logins</strong></p>
 
 Let's go back to our `hoho_filter.conf` and generate a regex for these entries. I will build upon what we've already created to show the evolution of the configuration
@@ -131,7 +131,7 @@ Let's look for malformed requests and generate our regex for these entries
 grep --ignore-case malformed /var/log/hohono.log
 ```
 
-![Malformed Requests](/assets/img/2021_sans_hhc/term/hoho_no/picture_4.png){: width="750"}
+![Malformed Requests](/assets/img/2021_sans_hhc/term/hoho_no/picture_4.PNG){: width="750"}
 <p align="center"><strong>Figure 4: Malformed Requests</strong></p>
 
 A malformed request that is sent could be form of fingerprinting or fuzzing for an actor to get more information about a system, so let's generate our regex for these entries
@@ -153,7 +153,7 @@ grep --ignore-case rejected /var/log/hohono.log
 
 And it looks like the hunch is correct:
 
-![Rejected Logins](/assets/img/2021_sans_hhc/term/hoho_no/picture_5.png){: width="750"}
+![Rejected Logins](/assets/img/2021_sans_hhc/term/hoho_no/picture_5.PNG){: width="750"}
 <p align="center"><strong>Figure 5: Rejected Logins</strong></p>
 
 So our `hoho_filter.conf` should now look like:
@@ -175,7 +175,7 @@ With all of our configurations complete, we can now execute the ban:
 # /root/naughtylist refresh
 ```
 
-![Success](/assets/img/2021_sans_hhc/term/hoho_no/picture_6.png){: width="750"}
+![Success](/assets/img/2021_sans_hhc/term/hoho_no/picture_6.PNG){: width="750"}
 <p align="center"><strong>Figure 6: We've Successfully Defended the Castle</strong></p>
 
 And just like that, we have successfully found all the offensive systems!

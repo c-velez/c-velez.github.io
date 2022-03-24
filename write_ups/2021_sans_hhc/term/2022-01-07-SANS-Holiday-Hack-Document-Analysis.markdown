@@ -29,7 +29,7 @@ Let's go ahead and verify this by running `exiftool 2021-12-21.docx`
 
 Looking at the bottom of the output, we can indeed see that Jack Frost modified 2021-12-21.docx.
 
-![We Found Jack Frost](/assets/img/2021_sans_hhc/term/document_analysis/picture_3.png){: width="750"}
+![We Found Jack Frost](/assets/img/2021_sans_hhc/term/document_analysis/picture_3.PNG){: width="750"}
 <p align="center"><strong>Figure 2: We Found Jack Frost!</strong></p>
 
 Let's validate this by entering this answer to the top terminal of the RPi terminal.

@@ -66,7 +66,7 @@ vim the_critical_elf_app
 /candy
 ```
 
-![Candycane Offset](/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.png){: width="750"}
+![Candycane Offset](/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.PNG){: width="750"}
 <p align="center"><strong>Figure 3: Location of the Candycane String</strong></p>
 
 We'll make every other letter in the string a zero. Make sure to run `:%!xxd -r` before quitting the vim session. Failure to do this will corrupt the file.
@@ -78,7 +78,7 @@ We'll make every other letter in the string a zero. Make sure to run `:%!xxd -r`
 
 We were able to bypass the first rule, but were blocked from execution due to `yara_rule_1056`.
 
-![Rule 1056](/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.png){: width="750"}
+![Rule 1056](/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.PNG){: width="750"}
 <p align="center"><strong>Figure 5: Execution Fails Due to Rule 1056</strong></p>
 
 Looking at the rule definition reveals the following:
@@ -103,12 +103,12 @@ Looking at the rule condition, the rule will only trigger if, and only if, all o
 
 It appears that `$s1` is for `libc.so`. Messing with this set of hex will destroy the exectution of the program, so we should probably not do anything to this set of hex values.
 
-![libc.so](/assets/img/2021_sans_hhc/term/yara_analysis/picture_6.png){: width="750"}
+![libc.so](/assets/img/2021_sans_hhc/term/yara_analysis/picture_6.PNG){: width="750"}
 <p align="center"><strong>Figure 6: <em>$s1</em> is Related to <em>libc.so</em></strong></p>
 
 Looking at `$hs2`, these hex values represent the string `rogram!!` in the hexdump. Since this is just a string, we can edit this part of the program to try and bypass the rule.
 
-![Rule 1056 Second Condition](/assets/img/2021_sans_hhc/term/yara_analysis/picture_7.png){: width="750"}
+![Rule 1056 Second Condition](/assets/img/2021_sans_hhc/term/yara_analysis/picture_7.PNG){: width="750"}
 <p align="center"><strong>Figure 6: Second String for Rule 1056</strong></p>
 
 Adding zeroes between each letter should do the trick
@@ -120,7 +120,7 @@ Adding zeroes between each letter should do the trick
 
 Our bypass for `yara_rule_1056` worked, but it looks like we've encountered another rule that is blocking our execution: `yara_rule_1732`.  
 
-![Blocked by Rule 1732](/assets/img/2021_sans_hhc/term/yara_analysis/picture_9.png){: width="750"}
+![Blocked by Rule 1732](/assets/img/2021_sans_hhc/term/yara_analysis/picture_9.PNG){: width="750"}
 <p align="center"><strong>Figure 9: Blocked by Rule 1732</strong></p>
 
 Looking at the rule definition provides us with 3 conditions that could be met in order for this rulle to trigger:

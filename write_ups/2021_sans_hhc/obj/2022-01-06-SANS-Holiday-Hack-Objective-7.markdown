@@ -18,22 +18,22 @@ categories: jekyll update
 
 When we click the printer, we are presented with the management UI of the printer. Let's go ahead and download the firmware
 
-![Printer Management Web Console](/assets/img/2021_sans_hhc/obj/obj07/picture_1.png){: width="750"}
+![Printer Management Web Console](/assets/img/2021_sans_hhc/obj/obj07/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 1: Printer Management Web Console</strong></p>
 
-![Firmware Download and Upload Page](/assets/img/2021_sans_hhc/obj/obj07/picture_2.png){: width="750"}
+![Firmware Download and Upload Page](/assets/img/2021_sans_hhc/obj/obj07/picture_2.PNG){: width="750"}
 <p align="center"><strong>Figure 2: Firmware Page</strong></p>
 
 The printer provides us with a JSON file with several fields in it. As hint one suggests, the firmware itself is base64 encoded. Additionally, we see that there is a signature that relates to what ever is encoded, as well as a secret length and hashing algorithm. Taking a look at hint 2, we know that this is all the information we need to conduct a hash extension attack. So we'll proceed with that attack vector
 
-![Original Firmware Blob](/assets/img/2021_sans_hhc/obj/obj07/picture_3.png){: width="750"}
+![Original Firmware Blob](/assets/img/2021_sans_hhc/obj/obj07/picture_3.PNG){: width="750"}
 <p align="center"><strong>Figure 3: Original Firmware Blob</strong></p>
 
 Decode the firmware field and put it in it's own file.
 
 `echo "<base64 encoded string>" > encoded && cat encoded | base64 -d > original_firmware`
 
-![Original Firmware Zip File](/assets/img/2021_sans_hhc/obj/obj07/picture_4.png){: width="750"}
+![Original Firmware Zip File](/assets/img/2021_sans_hhc/obj/obj07/picture_4.PNG){: width="750"}
 <p align="center"><strong>Figure 4: Original Firmware Zip File</strong></p>
 
 The `original_firmware` file that we create should contain the binary firmware. Running file against it, we see that it is a zip file. Let's rename the file and unzip it.
@@ -74,7 +74,7 @@ Time to construct our hash_extender command. For this, reading is ABSOLUTELY FUN
 
 Running `hash_extender --help` we see several options:
 
-![Hash Extender Options](/assets/img/2021_sans_hhc/obj/obj07/picture_8.png){: width="750"}
+![Hash Extender Options](/assets/img/2021_sans_hhc/obj/obj07/picture_8.PNG){: width="750"}
 <p align="center"><strong>Figure 5: Hash Extender Options</strong></p>
 
 The main ones we need to concern ourselves with are `--file`, `--secret`, `--append`, `--append-format`, `--signature`, `--format`, and `--out-data-format`
@@ -89,31 +89,31 @@ hash_extender --file firmware.zip --secret 16 --append `xxd -p -c 9999999999 pay
 
 Running the above results in:
 
-![Hash Extender Output](/assets/img/2021_sans_hhc/obj/obj07/picture_9.png){: width="750"}
+![Hash Extender Output](/assets/img/2021_sans_hhc/obj/obj07/picture_9.PNG){: width="750"}
 <p align="center"><strong>Figure 6: Hash Extender Output</strong></p>
 
 Time to build our json
 
 First we need to encode our new string. Let's use the Cyber Chef recipe From Hex to Base64. Something to note is that are new base64 encoded string is eerily similar to the original base64 encoded string. This is because we are just appending data to the end of the original file we received.
 
-![Cyber Chef Recipe](/assets/img/2021_sans_hhc/obj/obj07/picture_10.png){: width="750"}
+![Cyber Chef Recipe](/assets/img/2021_sans_hhc/obj/obj07/picture_10.PNG){: width="750"}
 <p align="center"><strong>Figure 7: Cyber Chef Recipe</strong></p>
 
 The base64 output from Cyber Chef will live in the firmware field of our crafted json and the new signature generated from our `hash_extender` command will live in the signature field of our crafted json. Secret length and algorithm will be the same as the original json.
 
-![Original to New Comparison](/assets/img/2021_sans_hhc/obj/obj07/picture_11.png){: width="750"}
+![Original to New Comparison](/assets/img/2021_sans_hhc/obj/obj07/picture_11.PNG){: width="750"}
 <p align="center"><strong>Figure 8: Comparing the Original JSON Blob to Our Crafted JSON Blob</strong></p>
 
 Time to see if this actually worked! Let's go ahead and upload our crafted json to the printer.
 
 It looks like it landed!
 
-![Upload Successful](/assets/img/2021_sans_hhc/obj/obj07/picture_13.png){: width="750"}
+![Upload Successful](/assets/img/2021_sans_hhc/obj/obj07/picture_13.PNG){: width="750"}
 <p align="center"><strong>Figure 9: Upload Successful</strong></p>
 
 Browsing to http://printer.kringlecastle.com/incoming/m4ntle_printer.log we see that script executed successfully!
 
-![Printer.log](/assets/img/2021_sans_hhc/obj/obj07/picture_1.png){: width="750"}
+![Printer.log](/assets/img/2021_sans_hhc/obj/obj07/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 10: Printer.log</strong></p>
 
 Answer: Troll_Pay_Chart.xlsx

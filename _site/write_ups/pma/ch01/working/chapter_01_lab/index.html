@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/pma/ch01/working/chapter_01_lab/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+<li><a href="/home">Home</a></li>
+<li><a href="/resume">Resume</a></li>
+<li><a href="/contact">Contact</a></li>
+<li><a href="/courses">Course Work</a></li>
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>Jan 28, 2022</time>
+
+<h1 id="practical-malware-analysis-chapter-1">Practical Malware Analysis Chapter 1</h1>
+
+<p>This chapter discusses techniques for basic static malware analysis. The binary structure of PE files can give a lot of information. This includes import and export tables, strings, resources used by the binary, and any obfuscation that may be used to prevent analysis. Often times, basic static analysis allows analysts to have a jumping off point for deeper analysis.</p>
+
+<hr />
+
+<h2 id="lab-1-1">Lab 1-1:</h2>
+
+<h3 id="file-metadata">File Metadata:</h3>
+
+<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> <br />
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">bb7425b82141a1c0f7d60e5106676bb1</code></p>
+
+<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> <br />
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">290934c61de9176ad682ffdd65f0a669</code></p>
+
+<h3 id="questions">Questions:</h3>
+
+<ol>
+  <li>Upload <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> and <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> to <a href="https://www.virustotal.com">Virus Total</a> and view the reports. Does either file match any existing anti virus signatures? <br />
+Virustotal is a sandbox website that allows users to upload potentially malicious files and urls as a way to get an initial understanding of the file. They use several anti-virus engines to characterize whether or not the file is malicious and to help determine what the file may do. Unfortunately, if the file that is being analyzed has never been uploaded before or there are no AV signatures created for it, it may not show up as malicious in Virus Total. As such, it is always good to do a more comprehensive analysis to determine the nature of the executable.</li>
+</ol>
+
+<p>Searching for the file hashes in Virus Total, we can note a few things:</p>
+
+<p>For <a href="https://www.virustotal.com/gui/file/58898bd42c5bd3bf9b1389f0eee5b39cd59180e8370eb9ea838a0b327bd6fe47/detection"><code class="language-plaintext highlighter-rouge">Lab01-01.exe</code></a>:</p>
+
+<ul>
+  <li>Virustotal indicates that 48 anti-virus engines flag this binary as malicious</li>
+  <li>Virustotal recognizes this hash to be associated with <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code>
+<img src="/assets/img/pma/ch01/picture_01.jpg" alt="Lab01-01.exe Virus Total 01" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-01.exe</em></strong></p>
+<ul>
+  <li>The majority of the anti-virus engines that recognize this executable characterize it as a <code class="language-plaintext highlighter-rouge">Trojan</code>
+<img src="/assets/img/pma/ch01/picture_02.jpg" alt="Lab01-01.exe Virus Total 02" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 2: Virus Total AV Engine Characterization for <em>Lab01-01.exe</em></strong></p>
+
+<p>For <a href="https://www.virustotal.com/gui/file/f50e42c8dfaab649bde0398867e930b86c2a599e8db83b8260393082268f2dba/detection"><code class="language-plaintext highlighter-rouge">Lab01-01.dll</code></a>:</p>
+
+<ul>
+  <li>Virustotal indicates that 41 anti-virus engines flag this binary as malicious</li>
+  <li>Virustotal recognizes this hash to be associated with <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code>
+<img src="/assets/img/pma/ch01/picture_03.jpg" alt="Lab01-01.dll Virus Total 01" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 3: Virus Total Detection Summary for <em>Lab01-01.dll</em></strong></p>
+<ul>
+  <li>The majority of the anti-virus engines also characterize this dll as a <code class="language-plaintext highlighter-rouge">Trojan</code>
+<img src="/assets/img/pma/ch01/picture_04.jpg" alt="Lab01-01.dll Virus Total 02" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 4: Virus Total AV Engine Characterization for <em>Lab01-01.dll</em></strong></p>
+
+<ol>
+  <li>When were the files compiled?</li>
+</ol>
+
+<p>Compilation time can be a bit tricky to understand as this can be obfuscated or changed at will during compile time. Additionally, certain compilers always display the same compilation time (ie. Delphi alway displays a compilation time of June 19, 1992). Although the correct time isn’t displayed for compilers that use a static date, this can be used as a hint as to what the malware author used to compile their malicious code.</p>
+
+<p>We can use PEview’s <code class="language-plaintext highlighter-rouge">Image File Header</code> to understand the compile time for each of these binaries:</p>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code>
+<strong>Compile Time</strong>: 2010/12/19 Sun 16:16:19 UTC
+<img src="/assets/img/pma/ch01/picture_05.jpg" alt="Lab01-01.exe Compile Time" width="750" /></p>
+<p align="center"><strong>Figure 5: Compile Time for <em>Lab01-01.exe</em> using PEview</strong></p>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code>
+<strong>Compile Time</strong>: 2010/12/16 Sun 16:16:38 UTC
+<img src="/assets/img/pma/ch01/picture_06.jpg" alt="Lab01-01.dll Compile Time" width="750" /></p>
+<p align="center"><strong>Figure 6: Compile Time for <em>Lab01-01.dll</em> using PEview</strong></p>
+
+<ol>
+  <li>Are there any indications that either of these files is packed or obfuscated? If so, what are these indicators? <br />
+There are several ways to determine if a file is packed or obfuscated.
+    <ul>
+      <li><strong>Strings</strong>: If there are few or no human readable strings in the binary, that could also be an indicator that the file is packed.</li>
+      <li><strong>PEiD</strong>: Loading the file in PEiD, we can check to see if PEiD recognizes or known compiler or packer</li>
+      <li><strong>Imports</strong>: Looking at the size of the import table in addition to what is being imported. A small import table could be indicative of packing.</li>
+      <li><strong>Header Information</strong>: Looking at the <code class="language-plaintext highlighter-rouge">.text</code> header information and comparing the <code class="language-plaintext highlighter-rouge">Virtual Size</code> and <code class="language-plaintext highlighter-rouge">Raw Size</code> of the file could indicate that a file is packed. If the file is not packed, these to values should be close to equal; if the <code class="language-plaintext highlighter-rouge">Virtual Size</code> is much larger than the <code class="language-plaintext highlighter-rouge">Raw Size</code>, this could indicate the the file is packed or obfuscated.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>We will walk through all of the above methods for both files in this lab</p>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code>
+<strong>Packed</strong>: No
+<strong>Analysis</strong>:</p>
+<ul>
+  <li>PEiD: Loading the file in to PEiD, the program recognizes that <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> was compiled using <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>
+<img src="assets/img/pma/ch01/picture_07.jpg" alt="Lab01-01.exe Packed Analysis PEiD" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 7: PEiD Output for <em>Lab01-01.exe</em></strong></p>
+<ul>
+  <li>Strings: We can also see in the strings output that there are several readable strings, including file paths and messages, in this executable
+<img src="/assets/img/pma/ch01/picture_08.jpg" alt="Lab01-01.exe Strings Analysis" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 8: Truncated Strings Output for <em>Lab01-01.exe</em></strong></p>
+<ul>
+  <li>Imports: Using dependency walker, we can take a look at the import table for this file. It should be noted that the strings output above also shows what the file imports.
+<img src="assets/img/pma/ch01/picture_09.jpg" alt="Lab01-01.exe Packed Analysis DepWalker 01" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 9: Dependency Walker Output for <em>Lab01-01.exe</em> - <em>kernel32.dll</em></strong></p>
+<p><img src="assets/img/pma/ch01/picture_10.jpg" alt="Lab01-01.exe Packed Analysis DepWalker 02" width="750" /></p>
+<p align="center"><strong>Figure 10: Dependency Walker Output for <em>Lab01-01.exe</em> - <em>msvcrt.dll</em></strong></p>
+<ul>
+  <li>Header Information: Pulling the file up in PEview again, we can talk a look at the <code class="language-plaintext highlighter-rouge">.text</code> section header information to view the reported size on disk (<code class="language-plaintext highlighter-rouge">Raw Size</code>) and the reported size in memory (<code class="language-plaintext highlighter-rouge">Virtual Size</code>). The <code class="language-plaintext highlighter-rouge">Virtual Size</code> (0x0970) and <code class="language-plaintext highlighter-rouge">Raw Size</code> (0x1000) are mostly the same size. The differ by 0x0690 bytes. Additionally, the <code class="language-plaintext highlighter-rouge">Virtual Size</code> is not larger than the <code class="language-plaintext highlighter-rouge">Raw Size</code>, indicating that the file is not packed.</li>
+</ul>
+
+<p>Using the above information, we can determine that the file is not packed. The most compelling pieces of evidence being that PEiD was able to recognize a known compiler for the file, as well as the comparison of the size on disk and size in memory.</p>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code>
+<strong>Packed</strong>: No
+<strong>Analysis</strong>:</p>
+<ul>
+  <li>PEid: Loading the file in to PEiD, the program recognizes that <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> was compiled using <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>
+<img src="assets/img/pma/ch01/picture_11.jpg" alt="Lab01-01.dll Packed Analysis PEiD" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 11: PEiD Output for <em>Lab01-01.dll</em></strong></p>
+<ul>
+  <li>Strings: We can see the strings produces a readable output, including was appears to be a hardcoded IP address: <code class="language-plaintext highlighter-rouge">127.26.152.13</code>
+<img src="assets/img/pma/ch01/picture_12.jpg" alt="Lab01-01.dll Strings Analysis" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 12: Strings Output for <em>Lab01-01.dll</em></strong></p>
+<ul>
+  <li>Imports: 
+<img src="assets/img/pma/ch01/picture_13.jpg" alt="Lab01-01.dll DepWalker 01" width="750" /></li>
+</ul>
+<p align="center"><strong>Figure 13: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>kernel32.dll</em></strong></p>
+<p><img src="assets/img/pma/ch01/picture_14.jpg" alt="Lab01-01.dll DepWalker 02" width="750" /></p>
+<p align="center"><strong>Figure 14: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>ws2_32.dll.dll</em></strong></p>
+<p><img src="assets/img/pma/ch01/picture_15.jpg" alt="Lab01-01.dll DepWalker 03" width="750" /></p>
+<p align="center"><strong>Figure 15: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>msvcrt.dll.dll</em></strong></p>
+<ul>
+  <li>Header Information: Pulling up the file in PEview, we can look at the <code class="language-plaintext highlighter-rouge">.text</code> section header. The <code class="language-plaintext highlighter-rouge">Virtual Size</code> (0x039E) and <code class="language-plaintext highlighter-rouge">Raw Size</code> (0x1000) differ quite a bit, but the <code class="language-plaintext highlighter-rouge">Virtual Size</code> is not larger than the <code class="language-plaintext highlighter-rouge">Raw Size</code>, indicating that this file is not packed.</li>
+</ul>
+
+<p>The above analysis is contains enough information to determine that the <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> file is not packed. The most compelling pieces of evidence being that PEiD was able to recognize a known compiler, and the comparison of the size on disk and the size in memory.</p>
+
+<ol>
+  <li>Do any imports hint at what this malware does? If so, which imports are they? <br />
+When analyzing imports, especially for malware that targets the <code class="language-plaintext highlighter-rouge">Windows</code> operating system, the <a href="https://docs.microsoft.com/en-us/">Microsoft Developer Network</a> documentation is <strong>critical</strong> in understanding what each function does. For example, doing a quick Google Search using the keywords <code class="language-plaintext highlighter-rouge">CreateProcessA MSDN</code>, yields the Microsoft Documentation for the <code class="language-plaintext highlighter-rouge">CreateProcessFunction</code> <a href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa">function</a>, including the structure, and how it is used. Knowing this, we can use the import tables that we enumerated in the previous question, to help us tie together what the malware may do.</li>
+</ol>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> <br />
+<strong>Imports</strong>:</p>
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">kernel32.dll</code>
+| Function | Documentation |
+| :–      | :–:          |
+| <code class="language-plaintext highlighter-rouge">CloseHandle</code>| https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle |
+| <code class="language-plaintext highlighter-rouge">CopyFileA</code> | https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-copyfilea |
+| <code class="language-plaintext highlighter-rouge">CreateFileA</code> | https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea |
+| <code class="language-plaintext highlighter-rouge">CreateFileMappingA</code> | https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createfilemappinga |
+| <code class="language-plaintext highlighter-rouge">FindClose</code> | https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findclose |
+| <code class="language-plaintext highlighter-rouge">FindFirstFileA</code> | https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirstfilea |
+| <code class="language-plaintext highlighter-rouge">FindNextFileA</code> | https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findnextfilea |
+| <code class="language-plaintext highlighter-rouge">IsBadReadPtr</code> | https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-isbadreadptr |
+| <code class="language-plaintext highlighter-rouge">MapViewOfFile</code> | https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-mapviewoffile |
+| <code class="language-plaintext highlighter-rouge">UnmapViewOfFile</code> | https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-unmapviewoffile |</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">msvcrt.dll</code> - These are all standard C library functions for Visual C++. The most interesting imports are <code class="language-plaintext highlighter-rouge">_stricmp</code> and <code class="language-plaintext highlighter-rouge">malloc</code></p>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">_XcptFilter</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__getmainargs</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__p___initenv</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__p__commode</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__p__fmode</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__set_app_type</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__setusermatherr</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_adjust_fdiv</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_controlfp</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_except_handler3</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_exit</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_initterm</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_stricmp</code></li>
+      <li><code class="language-plaintext highlighter-rouge">exit</code></li>
+      <li><code class="language-plaintext highlighter-rouge">malloc</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Looking at the imports, we can infer that this binary iterates through the file system and copies files.</p>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> <br />
+<strong>Imports</strong>:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kernel32.dll</code>
+| Function | Documentation |
+| :–      | :–:          |
+| <code class="language-plaintext highlighter-rouge">ClosHandle</code> | https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle |
+| <code class="language-plaintext highlighter-rouge">CreateMutexA</code> | https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-createmutexa |
+| <code class="language-plaintext highlighter-rouge">CreateProcessA</code> | https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa |
+| <code class="language-plaintext highlighter-rouge">OpenMutex</code> | https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-openmutexw |
+| <code class="language-plaintext highlighter-rouge">Sleep</code> | https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleep |</li>
+  <li><code class="language-plaintext highlighter-rouge">ws2_32.dll</code> - Dependency Walker displays the ordinals for these functions, so we’ll have to look at the table to match the function to the ordinal
+| Function | Documentation |
+| <code class="language-plaintext highlighter-rouge">closesocket</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-closesocket |
+| <code class="language-plaintext highlighter-rouge">connect</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect |
+| <code class="language-plaintext highlighter-rouge">htons</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-htons |
+| <code class="language-plaintext highlighter-rouge">inet_addr</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-inet_addr |
+| <code class="language-plaintext highlighter-rouge">recv</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recv |
+| <code class="language-plaintext highlighter-rouge">send</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send |
+| <code class="language-plaintext highlighter-rouge">shutdown</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-shutdown |
+| <code class="language-plaintext highlighter-rouge">socket</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket |
+| <code class="language-plaintext highlighter-rouge">WSAStartup</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsastartup |
+| <code class="language-plaintext highlighter-rouge">WSACleanup</code> | https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsacleanup |</li>
+  <li><code class="language-plaintext highlighter-rouge">msvcrt.dll</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">_adjustr_fdiv</code></li>
+      <li><code class="language-plaintext highlighter-rouge">innitterm</code></li>
+      <li><code class="language-plaintext highlighter-rouge">free</code></li>
+      <li><code class="language-plaintext highlighter-rouge">malloc</code></li>
+      <li><code class="language-plaintext highlighter-rouge">strncmp</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Based off the imports, this dll creates a socket, attempts to connect to web based resource, and sends and recieves some data. Knowing this, when conducting basic dynamic analysis, listeners and a fake network can be set up to trick the malware in to thinking it has internet connectivity to better understand the network resources it is attempting to access.</p>
+
+<ol>
+  <li>Are there any other files or host based indicators that you could look for on infected systems?</li>
+</ol>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> <br />
+When running strings against this file an interesting reference to a dll was discovered. We can look for <code class="language-plaintext highlighter-rouge">kerne132.dll</code> on the system as this appears to be an attempt to obfuscate this dll. Of note, the ‘l’ in kernel is replaced with a 1 (one). This technique is used to make the file hard to find since the human eye could easily recognize the 1 as an l at first glance.</p>
+
+<ol>
+  <li>What network-based indicators could be used to find this malware on infected machines?</li>
+</ol>
+
+<p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> <br />
+When running strings against this file, a reference to what appears to be an IP address is discovered. Based on the import table, it is likely that this binary attempts to connect to <code class="language-plaintext highlighter-rouge">127.26.152.13</code>.</p>
+
+<ol>
+  <li>What would you guess is the purpose of these files?
+The purpose of these files is likely to install and run a backdoor. We know this because <code class="language-plaintext highlighter-rouge">CreateProcess</code> and <code class="language-plaintext highlighter-rouge">Sleep</code> are commonly used functions in backdoors. Additionally, the IP address that was found in the <code class="language-plaintext highlighter-rouge">dll</code> implies command and control functionality. Additionally, looking at the strings for the <code class="language-plaintext highlighter-rouge">.exe</code>, we see references to the <code class="language-plaintext highlighter-rouge">dll</code>. The <code class="language-plaintext highlighter-rouge">exe</code> likely looks for and/or installs the <code class="language-plaintext highlighter-rouge">dll</code>, replaces <code class="language-plaintext highlighter-rouge">kernel32.dll</code> with the <code class="language-plaintext highlighter-rouge">dll</code> as <code class="language-plaintext highlighter-rouge">kerne132.dll</code>, and then executes it.</li>
+</ol>
+
+<hr />
+
+<h2 id="lab-1-2">Lab 1-2:</h2>
+
+<h3 id="file-metadata-1">File Metadata:</h3>
+
+<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-02.exe</code> <br />
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">8363436878404da0ae3e46991e355b83</code></p>
+
+<h3 id="questions-1">Questions:</h3>
+
+<ol>
+  <li>
+    <p>Upload the <code class="language-plaintext highlighter-rouge">Lab01-02.exe</code> file to <a href="https://www.virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</p>
+  </li>
+  <li>
+    <p>Are there any indications that this file is packed or abfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</p>
+  </li>
+  <li>
+    <p>Do any imports hint at this program’s functionality? If so, which imports are they and what do they tell you?</p>
+  </li>
+  <li>
+    <p>What host or network-based indicators could be used to identify this malware on infected machines?</p>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="lab-1-3">Lab 1-3:</h2>
+
+<h3 id="file-metadata-2">File Metadata:</h3>
+
+<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-03.exe</code> <br />
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">9c5c27494c28ed0b14853b346b113145</code></p>
+
+<h3 id="questions-2">Questions:</h3>
+
+<ol>
+  <li>
+    <p>Upload the file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</p>
+  </li>
+  <li>
+    <p>Are there any indications that this file is packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</p>
+  </li>
+  <li>
+    <p>Do any imports hint at this program’s functionality? If so, which imports are they and what do they tell you?</p>
+  </li>
+  <li>
+    <p>What host or network-based indicators could be used to identify this malware on infected machiens?</p>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="lab-1-4">Lab 1-4</h2>
+
+<h3 id="file-metadata-3">File Metadata:</h3>
+
+<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-04.exe</code> <br />
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">624ac05fd47adc3c63700c3b30de79ab</code></p>
+
+<h3 id="questions-3">Questions:</h3>
+
+<ol>
+  <li>
+    <p>Upload the file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</p>
+  </li>
+  <li>
+    <p>Are there any indications that this file is packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</p>
+  </li>
+  <li>
+    <p>When was this program compiled?</p>
+  </li>
+  <li>
+    <p>Do any imports hint at this program’s functionality? If so, which imports are they and what do they tell you?</p>
+  </li>
+  <li>
+    <p>What host or network-based indicators could be used to identify this malware or infected machines?</p>
+  </li>
+  <li>
+    <p>This file has one resource in the resource section. Use Resource Hacker to examine that resource, and then use it to extract the resource. What can you learn from the resource?</p>
+  </li>
+</ol>
+
+<hr />
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>

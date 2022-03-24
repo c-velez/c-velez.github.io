@@ -19,7 +19,7 @@ categories: jekyll update
 
 Let's pop open the terminal and see what we have to work with
 
-![Initial Terminal Output](/assets/img/2021_sans_hhc/obj/obj05/picture_1.png){: width="750"}
+![Initial Terminal Output](/assets/img/2021_sans_hhc/obj/obj05/picture_1.PNG){: width="750"}
 <p align="center"><strong>Figure 1: Initial Terminal Output</strong></p>
 
 It looks like we'll have to evaluate a USB device and answer a series of flags for this objective!
@@ -30,7 +30,7 @@ Taking a look at `/mnt/USBDEVICE` we see there is a file there called inject.bin
 cp /mnt/USBDEVICE/inject.bin ~/
 ```
 
-![Copy File](/assets/img/2021_sans_hhc/obj/obj05/picture_2.png){: width="750"}
+![Copy File](/assets/img/2021_sans_hhc/obj/obj05/picture_2.PNG){: width="750"}
 <p align="center"><strong>Figure 2: Copy the File to the Home Directory</strong></p>
 
 Let's run `mallard.py` against the `inject.bin` to see what the decoded output looks like.
@@ -41,17 +41,17 @@ $ ./mallard.py --file inject.bin
 
 It looks like it worked! We see the routine that the inject.bin file contains. It looks like someone was enumerating the user and attempting to call back to `trollfun.jackfrosttower.com/1337`. There's also a base64 encoded string with a series of commands that were used to generate it.
 
-![Mallard Output](/assets/img/2021_sans_hhc/obj/obj05/picture_3.png){: width="750"}
+![Mallard Output](/assets/img/2021_sans_hhc/obj/obj05/picture_3.PNG){: width="750"}
 <p align="center"><strong>Figure 3: Mallard Decoded Output</strong></p>
 
 Let's do some decoding. We see that the string was encoded, and then reversed. Looking at the actual command, we should be able to copy and paste it in to the terminal and get the decoded output
 
-![Decode Suspect String](/assets/img/2021_sans_hhc/obj/obj05/picture_4.png){: width="750"}
+![Decode Suspect String](/assets/img/2021_sans_hhc/obj/obj05/picture_4.PNG){: width="750"}
 <p align="center"><strong>Figure 4: Decode the Suspicous String!</strong></p>
 
 It looks like we found the culprit!
 
-![The Culprit](/assets/img/2021_sans_hhc/obj/obj05/picture_4.png){: width="750"}
+![The Culprit](/assets/img/2021_sans_hhc/obj/obj05/picture_4.PNG){: width="750"}
 <p align="center"><strong>Figure 5: The Culprit</strong></p>
 
 Answer: ||Icky McGoop||
