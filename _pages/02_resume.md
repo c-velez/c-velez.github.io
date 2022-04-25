@@ -101,7 +101,8 @@ Other:
     * Agile/SCRUM
 
 Extra Curriculars
-:   * UCF Collegiate Cybersecurity Competition Team, CCDC Member
+:   * National Collegiate Cyber Defense Competition (NCCDC), 2022 National Champion
+    * UCF Collegiate Cybersecurity Competition Team, CCDC Member
     * Collegiate Cyber Defense Club @ UCF, Operations Team
     * National Cyber League (Top 4%)
     * HiveStorm
