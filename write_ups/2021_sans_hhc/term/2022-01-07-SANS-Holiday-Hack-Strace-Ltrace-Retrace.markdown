@@ -28,7 +28,7 @@ Running `ltrace ./make_the_candy`, we see that the program is looking for a `reg
 ![Trying to Open `registration.json`](/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_2.png){: width="750"}
 <p align="center"><strong>Figure 2: Trying to Open <em>registration.json</em></strong></p>
 
-![Create the File it is Looking For](/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_3.png){: width="750"}
+![Create the File it is Looking For](/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_3.PNG){: width="750"}
 <p align="center"><strong>Figure 3: Create the File the Program is Looking For</strong></p>
 
 Running the program after creating the registration file, we see that the program is looking for the term `Registration` inside of the file. We know this because of the call to the `strstr()` function. This function takes 2 arguments, the first argument is the string that is found, the second argument is the string it is looking for. The function returns a pointer to the beginning of the substring (the second argument) if it is found. If it doesn't find the substring, it returns `NULL`. 
@@ -38,7 +38,7 @@ Running the program after creating the registration file, we see that the progra
 
 Let's edit our registration file to make the word `Registration` the key, for the key, value pair.
 
-![Edit the Key](/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_5.png){: width="750"}
+![Edit the Key](/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_5.PNG){: width="750"}
 <p align="center"><strong>Figure 5: Updated Contents of <em>registration.json</em></strong></p>
 
 Running the program with the editted configuration file still yields an unregistered error. Let's run `ltrace` against the program again and take a look at the output.
