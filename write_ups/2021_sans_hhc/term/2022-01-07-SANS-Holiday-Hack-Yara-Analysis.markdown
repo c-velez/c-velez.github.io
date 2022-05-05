@@ -66,7 +66,7 @@ vim the_critical_elf_app
 /candy
 ```
 
-![Candycane Offset](/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.PNG){: width="750"}
+![Candycane Offset](/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.png){: width="750"}
 <p align="center"><strong>Figure 3: Location of the Candycane String</strong></p>
 
 We'll make every other letter in the string a zero. Make sure to run `:%!xxd -r` before quitting the vim session. Failure to do this will corrupt the file.
@@ -78,7 +78,7 @@ We'll make every other letter in the string a zero. Make sure to run `:%!xxd -r`
 
 We were able to bypass the first rule, but were blocked from execution due to `yara_rule_1056`.
 
-![Rule 1056](/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.PNG){: width="750"}
+![Rule 1056](/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.png){: width="750"}
 <p align="center"><strong>Figure 5: Execution Fails Due to Rule 1056</strong></p>
 
 Looking at the rule definition reveals the following:
