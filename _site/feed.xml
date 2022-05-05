@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-02-23T10:26:43-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Mind Palace</title><subtitle>A space for learning and thought</subtitle><entry><title type="html">Practical Malware Analysis Write Ups</title><link href="http://localhost:4000/practical-malware-analysis/" rel="alternate" type="text/html" title="Practical Malware Analysis Write Ups" /><published>2022-01-31T00:00:00-05:00</published><updated>2022-01-31T00:00:00-05:00</updated><id>http://localhost:4000/Practical-Malware-Analysis</id><content type="html" xml:base="http://localhost:4000/practical-malware-analysis/"><![CDATA[<h1 id="practical-malware-analysis">Practical Malware Analysis</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-05-05T08:51:45-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Mind Palace</title><subtitle>A space for learning and thought</subtitle><entry><title type="html">Practical Malware Analysis Write Ups</title><link href="http://localhost:4000/practical-malware-analysis/" rel="alternate" type="text/html" title="Practical Malware Analysis Write Ups" /><published>2022-01-31T00:00:00-05:00</published><updated>2022-01-31T00:00:00-05:00</updated><id>http://localhost:4000/Practical-Malware-Analysis</id><content type="html" xml:base="http://localhost:4000/practical-malware-analysis/"><![CDATA[<h1 id="practical-malware-analysis">Practical Malware Analysis</h1>
 
 <p>The next couple of months and posts will focus on my journey in to learning malware analysis. Currently I am enrolled in a Malware Analysis Course at University. The course will cover topics in basic static and dynamic analysis techniques, as well as Reverse Engineering and Debugging. To help enhance our learning, the required reading is the <a href="http://nostarch.com/malware"><em>Practical Malware Analysis</em></a> book by Andrew Honig and Michael Sikorski.</p>
 
@@ -8,7 +8,7 @@
 
 <h2 id="write-ups">Write Ups</h2>
 <ul>
-  <li><a href="/write_ups/pma/ch01/chapter_01_lab">Chapter 01: Basic Static Techniques</a></li>
+  <li><a href="/write_ups/pma/ch01/chapter_01_directory">Chapter 01: Basic Static Techniques</a></li>
   <li>Chapter 03: Basic Dynamic Techniques</li>
   <li>Chapter 05: IDA Pro</li>
   <li>Chapter 06: Recognizing C Code Constructs in Assembly</li>
@@ -67,5 +67,5 @@
   <li><a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Holiday-Hero">Holiday Hero</a></li>
   <li><a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Hoho-No">Hoho…No</a></li>
   <li><a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Yara-Analysis">Yara Analysis</a></li>
-  <li><a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-strace-ltrace-retrace">strace ltrace retrace</a></li>
+  <li><a href="/write_ups/2021_sans_hhc/term/2022-01-07-SANS-Holiday-Hack-Strace-Ltrace-Retrace">strace ltrace retrace</a></li>
 </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[2021 SANS Holiday Hack Challenge Write-Up]]></summary></entry></feed>

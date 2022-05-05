@@ -114,7 +114,7 @@
 /candy
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.png" alt="Candycane Offset" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.PNG" alt="Candycane Offset" width="750" /></p>
 <p align="center"><strong>Figure 3: Location of the Candycane String</strong></p>
 
 <p>We’ll make every other letter in the string a zero. Make sure to run <code class="language-plaintext highlighter-rouge">:%!xxd -r</code> before quitting the vim session. Failure to do this will corrupt the file.</p>
@@ -126,7 +126,7 @@
 
 <p>We were able to bypass the first rule, but were blocked from execution due to <code class="language-plaintext highlighter-rouge">yara_rule_1056</code>.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.png" alt="Rule 1056" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.PNG" alt="Rule 1056" width="750" /></p>
 <p align="center"><strong>Figure 5: Execution Fails Due to Rule 1056</strong></p>
 
 <p>Looking at the rule definition reveals the following:</p>
@@ -150,12 +150,12 @@
 
 <p>It appears that <code class="language-plaintext highlighter-rouge">$s1</code> is for <code class="language-plaintext highlighter-rouge">libc.so</code>. Messing with this set of hex will destroy the exectution of the program, so we should probably not do anything to this set of hex values.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_6.png" alt="libc.so" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_6.PNG" alt="libc.so" width="750" /></p>
 <p align="center"><strong>Figure 6: <em>$s1</em> is Related to <em>libc.so</em></strong></p>
 
 <p>Looking at <code class="language-plaintext highlighter-rouge">$hs2</code>, these hex values represent the string <code class="language-plaintext highlighter-rouge">rogram!!</code> in the hexdump. Since this is just a string, we can edit this part of the program to try and bypass the rule.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_7.png" alt="Rule 1056 Second Condition" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_7.PNG" alt="Rule 1056 Second Condition" width="750" /></p>
 <p align="center"><strong>Figure 6: Second String for Rule 1056</strong></p>
 
 <p>Adding zeroes between each letter should do the trick</p>
@@ -167,7 +167,7 @@
 
 <p>Our bypass for <code class="language-plaintext highlighter-rouge">yara_rule_1056</code> worked, but it looks like we’ve encountered another rule that is blocking our execution: <code class="language-plaintext highlighter-rouge">yara_rule_1732</code>.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_9.png" alt="Blocked by Rule 1732" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_9.PNG" alt="Blocked by Rule 1732" width="750" /></p>
 <p align="center"><strong>Figure 9: Blocked by Rule 1732</strong></p>
 
 <p>Looking at the rule definition provides us with 3 conditions that could be met in order for this rulle to trigger:</p>
@@ -215,7 +215,7 @@
 <p align="center">Notice how the hex appears to be "backwards" when compared to the rule <br />
 	<em>454c4602</em> versus <em>02464c45</em> as defined in the rule</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_10.png" alt="After Editing" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_11.PNG" alt="After Editing" width="750" /></p>
 <p align="center"><strong>Figure 11: Changing <em>02</em> to <em>00</em> Should do the Trick</strong></p>
 
 <h3 id="success">Success</h3>
@@ -224,8 +224,8 @@
 
 <p>Luckily, we caught this one quick ;)</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_10.png" alt="Full Bypass" width="750" /></p>
-<p align="center"><strong>Figure 11: Success Full Bypass of All Yara Rules</strong></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_12.PNG" alt="Full Bypass" width="750" /></p>
+<p align="center"><strong>Figure 12: Success Full Bypass of All Yara Rules</strong></p>
 
 <hr />
 <p align="center"><a href="/write_ups/2021_sans_hhc/obj/2022-01-06-SANS-Holiday-Hack-Objective-9">&lt; Objective 9</a> :: <a href="/2021-SANS-Holiday-Hack-Challenge/">Main Write Up &gt;</a></p>

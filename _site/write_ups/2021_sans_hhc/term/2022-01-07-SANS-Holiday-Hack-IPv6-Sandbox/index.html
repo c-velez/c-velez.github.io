@@ -71,7 +71,7 @@ Using the hint, we know that we can use ping6 to find the link local addresses f
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping6 ff02::1 -c2
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_2.png" alt="Ping Your Neighbors" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_2.PNG" alt="Ping Your Neighbors" width="750" /></p>
 <p align="center"><strong>Figure 1: IPv6 Ping Sweep</strong></p>
 
 <p>It looks like we get responses from 3 unique addresses.</p>
@@ -81,7 +81,7 @@ Using the hint, we know that we can use ping6 to find the link local addresses f
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap -6 fe80::42:c0ff:fea8:a002%eth0
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_3.png" alt="Fingerprint the Host" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_3.PNG" alt="Fingerprint the Host" width="750" /></p>
 <p align="center"><strong>Figure 2: Scanning <em>fe80::42:c0ff:fea8:a002</em></strong></p>
 
 <p>It looks like we got some results. Let’s use curl to interrogate the http port on this machine.</p>
@@ -89,17 +89,17 @@ Using the hint, we know that we can use ping6 to find the link local addresses f
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl http://[fe80::42:c0ff:fea8:a002]:80/ --interface eth0
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_4.png" alt="cURL the Host" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_4.PNG" alt="cURL the Host" width="750" /></p>
 <p align="center"><strong>Figure 3: Interrogating Port 80 on the Enumerated Host</strong></p>
 
 <p>It looks like we are getting closer! Let’s interrogate the other port that was enumerated to see if we can get the activation phrase for the candy striper!</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_5.png" alt="Follow the Instructions" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_5.PNG" alt="Follow the Instructions" width="750" /></p>
 <p align="center"><strong>Figure 4: Interrogating the Other Port to get the Flag</strong></p>
 
 <p>It looks like all the Candy Striper wants it “PieceOnEarth”! Let’s give it that!</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_6.png" alt="Candy Striper Activated" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/ipv6_sandbox/picture_6.PNG" alt="Candy Striper Activated" width="750" /></p>
 <p align="center"><strong>Figure 5: Candy Striper Activated</strong></p>
 
 <hr />

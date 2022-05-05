@@ -78,7 +78,7 @@
 
 <p>When we open up the terminal, we are immediately given a set of instructions on how to ban and unban IP addresses</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_1.png" alt="Instructions" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_1.PNG" alt="Instructions" width="750" /></p>
 <p align="center"><strong>Figure 1: How to Block IPs</strong></p>
 
 <p>The terminal specifies that to add IP addresses to the block list, we must use <code class="language-plaintext highlighter-rouge">/root/naughtylist add &lt;IP address&gt;</code>, and to take off the block list, we must use <code class="language-plaintext highlighter-rouge">/root/naughtylist del &lt;IP address&gt;</code></p>
@@ -136,7 +136,7 @@ action   = hoho_action         # Which action configuration file to use
 
 <p>This produces several <code class="language-plaintext highlighter-rouge">invalid</code> heartbeat log entries.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_2.png" alt="Invalid Heartbeats" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_2.PNG" alt="Invalid Heartbeats" width="750" /></p>
 <p align="center"><strong>Figure 2: Invalid Heartbeats</strong></p>
 
 <p>With this, let’s populate <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code> with our first entry.</p>
@@ -162,7 +162,7 @@ failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
 
 <p>It looks like this keyword produced entries for failed logins for accounts:</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_3.png" alt="Failed Logins" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_3.PNG" alt="Failed Logins" width="750" /></p>
 <p align="center"><strong>Figure 3: Failed Logins</strong></p>
 
 <p>Let’s go back to our <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code> and generate a regex for these entries. I will build upon what we’ve already created to show the evolution of the configuration</p>
@@ -179,7 +179,7 @@ failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grep --ignore-case malformed /var/log/hohono.log
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_4.png" alt="Malformed Requests" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_4.PNG" alt="Malformed Requests" width="750" /></p>
 <p align="center"><strong>Figure 4: Malformed Requests</strong></p>
 
 <p>A malformed request that is sent could be form of fingerprinting or fuzzing for an actor to get more information about a system, so let’s generate our regex for these entries</p>
@@ -199,7 +199,7 @@ failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
 
 <p>And it looks like the hunch is correct:</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_5.png" alt="Rejected Logins" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_5.PNG" alt="Rejected Logins" width="750" /></p>
 <p align="center"><strong>Figure 5: Rejected Logins</strong></p>
 
 <p>So our <code class="language-plaintext highlighter-rouge">hoho_filter.conf</code> should now look like:</p>
@@ -219,7 +219,7 @@ failregex = Invalid heartbeat '.*' from &lt;HOST&gt;$
 # /root/naughtylist refresh
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_6.png" alt="Success" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/hoho_no/picture_6.PNG" alt="Success" width="750" /></p>
 <p align="center"><strong>Figure 6: We've Successfully Defended the Castle</strong></p>
 
 <p>And just like that, we have successfully found all the offensive systems!</p>

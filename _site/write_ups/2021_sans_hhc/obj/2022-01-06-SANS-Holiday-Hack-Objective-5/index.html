@@ -71,7 +71,7 @@
 
 <p>Let’s pop open the terminal and see what we have to work with</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_1.png" alt="Initial Terminal Output" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_1.PNG" alt="Initial Terminal Output" width="750" /></p>
 <p align="center"><strong>Figure 1: Initial Terminal Output</strong></p>
 
 <p>It looks like we’ll have to evaluate a USB device and answer a series of flags for this objective!</p>
@@ -81,7 +81,7 @@
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cp /mnt/USBDEVICE/inject.bin ~/
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_2.png" alt="Copy File" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_2.PNG" alt="Copy File" width="750" /></p>
 <p align="center"><strong>Figure 2: Copy the File to the Home Directory</strong></p>
 
 <p>Let’s run <code class="language-plaintext highlighter-rouge">mallard.py</code> against the <code class="language-plaintext highlighter-rouge">inject.bin</code> to see what the decoded output looks like.</p>
@@ -91,17 +91,17 @@
 
 <p>It looks like it worked! We see the routine that the inject.bin file contains. It looks like someone was enumerating the user and attempting to call back to <code class="language-plaintext highlighter-rouge">trollfun.jackfrosttower.com/1337</code>. There’s also a base64 encoded string with a series of commands that were used to generate it.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_3.png" alt="Mallard Output" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_3.PNG" alt="Mallard Output" width="750" /></p>
 <p align="center"><strong>Figure 3: Mallard Decoded Output</strong></p>
 
 <p>Let’s do some decoding. We see that the string was encoded, and then reversed. Looking at the actual command, we should be able to copy and paste it in to the terminal and get the decoded output</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_4.png" alt="Decode Suspect String" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_4.PNG" alt="Decode Suspect String" width="750" /></p>
 <p align="center"><strong>Figure 4: Decode the Suspicous String!</strong></p>
 
 <p>It looks like we found the culprit!</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_4.png" alt="The Culprit" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj05/picture_4.PNG" alt="The Culprit" width="750" /></p>
 <p align="center"><strong>Figure 5: The Culprit</strong></p>
 
 <table>

@@ -70,22 +70,22 @@
 
 <p>When we click the printer, we are presented with the management UI of the printer. Let’s go ahead and download the firmware</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_1.png" alt="Printer Management Web Console" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_1.PNG" alt="Printer Management Web Console" width="750" /></p>
 <p align="center"><strong>Figure 1: Printer Management Web Console</strong></p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_2.png" alt="Firmware Download and Upload Page" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_2.PNG" alt="Firmware Download and Upload Page" width="750" /></p>
 <p align="center"><strong>Figure 2: Firmware Page</strong></p>
 
 <p>The printer provides us with a JSON file with several fields in it. As hint one suggests, the firmware itself is base64 encoded. Additionally, we see that there is a signature that relates to what ever is encoded, as well as a secret length and hashing algorithm. Taking a look at hint 2, we know that this is all the information we need to conduct a hash extension attack. So we’ll proceed with that attack vector</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_3.png" alt="Original Firmware Blob" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_3.PNG" alt="Original Firmware Blob" width="750" /></p>
 <p align="center"><strong>Figure 3: Original Firmware Blob</strong></p>
 
 <p>Decode the firmware field and put it in it’s own file.</p>
 
 <p><code class="language-plaintext highlighter-rouge">echo "&lt;base64 encoded string&gt;" &gt; encoded &amp;&amp; cat encoded | base64 -d &gt; original_firmware</code></p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_4.png" alt="Original Firmware Zip File" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_4.PNG" alt="Original Firmware Zip File" width="750" /></p>
 <p align="center"><strong>Figure 4: Original Firmware Zip File</strong></p>
 
 <p>The <code class="language-plaintext highlighter-rouge">original_firmware</code> file that we create should contain the binary firmware. Running file against it, we see that it is a zip file. Let’s rename the file and unzip it.</p>
@@ -125,7 +125,7 @@ chmod +x firmware.bin
 
 <p>Running <code class="language-plaintext highlighter-rouge">hash_extender --help</code> we see several options:</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_8.png" alt="Hash Extender Options" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_8.PNG" alt="Hash Extender Options" width="750" /></p>
 <p align="center"><strong>Figure 5: Hash Extender Options</strong></p>
 
 <p>The main ones we need to concern ourselves with are <code class="language-plaintext highlighter-rouge">--file</code>, <code class="language-plaintext highlighter-rouge">--secret</code>, <code class="language-plaintext highlighter-rouge">--append</code>, <code class="language-plaintext highlighter-rouge">--append-format</code>, <code class="language-plaintext highlighter-rouge">--signature</code>, <code class="language-plaintext highlighter-rouge">--format</code>, and <code class="language-plaintext highlighter-rouge">--out-data-format</code></p>
@@ -139,31 +139,31 @@ chmod +x firmware.bin
 
 <p>Running the above results in:</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_9.png" alt="Hash Extender Output" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_9.PNG" alt="Hash Extender Output" width="750" /></p>
 <p align="center"><strong>Figure 6: Hash Extender Output</strong></p>
 
 <p>Time to build our json</p>
 
 <p>First we need to encode our new string. Let’s use the Cyber Chef recipe From Hex to Base64. Something to note is that are new base64 encoded string is eerily similar to the original base64 encoded string. This is because we are just appending data to the end of the original file we received.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_10.png" alt="Cyber Chef Recipe" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_10.PNG" alt="Cyber Chef Recipe" width="750" /></p>
 <p align="center"><strong>Figure 7: Cyber Chef Recipe</strong></p>
 
 <p>The base64 output from Cyber Chef will live in the firmware field of our crafted json and the new signature generated from our <code class="language-plaintext highlighter-rouge">hash_extender</code> command will live in the signature field of our crafted json. Secret length and algorithm will be the same as the original json.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_11.png" alt="Original to New Comparison" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_11.PNG" alt="Original to New Comparison" width="750" /></p>
 <p align="center"><strong>Figure 8: Comparing the Original JSON Blob to Our Crafted JSON Blob</strong></p>
 
 <p>Time to see if this actually worked! Let’s go ahead and upload our crafted json to the printer.</p>
 
 <p>It looks like it landed!</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_13.png" alt="Upload Successful" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_13.PNG" alt="Upload Successful" width="750" /></p>
 <p align="center"><strong>Figure 9: Upload Successful</strong></p>
 
 <p>Browsing to http://printer.kringlecastle.com/incoming/m4ntle_printer.log we see that script executed successfully!</p>
 
-<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_1.png" alt="Printer.log" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/obj/obj07/picture_1.PNG" alt="Printer.log" width="750" /></p>
 <p align="center"><strong>Figure 10: Printer.log</strong></p>
 
 <p>Answer: Troll_Pay_Chart.xlsx</p>

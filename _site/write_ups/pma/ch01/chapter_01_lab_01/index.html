@@ -13,7 +13,7 @@
 
   <link
     rel="canonical"
-    href="http://localhost:4000/write_ups/pma/ch01/chapter_01_lab/"
+    href="http://localhost:4000/write_ups/pma/ch01/chapter_01_lab_01/"
   />
 
   <link
@@ -54,15 +54,9 @@
       <article><h2></h2>
 <time>Jan 28, 2022</time>
 
-<h1 id="practical-malware-analysis-ch01">Practical Malware Analysis Ch01</h1>
+<h1 id="lab-1-1">Lab 1-1:</h1>
 
-<p>This chapter discusses techniques for basic static malware analysis. The binary structure of PE files can give a lot of information. This includes import and export tables, strings, resources used by the binary, and any obfuscation that may be used to prevent analysis. Often times, basic static analysis allows analysts to have a jumping off point for deeper analysis.</p>
-
-<hr />
-
-<h2 id="lab-1-1">Lab 1-1:</h2>
-
-<h3 id="file-metadata">File Metadata:</h3>
+<h2 id="file-metadata">File Metadata:</h2>
 
 <p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> <br />
 <strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">bb7425b82141a1c0f7d60e5106676bb1</code></p>
@@ -70,7 +64,7 @@
 <p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> <br />
 <strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">290934c61de9176ad682ffdd65f0a669</code></p>
 
-<h3 id="questions">Questions:</h3>
+<h2 id="questions">Questions:</h2>
 
 <p><strong>Q1. Upload <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> and <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> to <a href="https://www.virustotal.com">Virus Total</a> and view the reports. Does either file match any existing anti virus signatures?</strong></p>
 
@@ -83,12 +77,12 @@
 <ul>
   <li>Virustotal indicates that 48 anti-virus engines flag this binary as malicious</li>
   <li>Virustotal recognizes this hash to be associated with <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code>
-<img src="/assets/img/pma/ch01/picture_01.JPG" alt="Lab01-01.exe Virus Total 01" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_01.JPG" alt="Lab01-01.exe Virus Total 01" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-01.exe</em></strong></p>
 <ul>
   <li>The majority of the anti-virus engines that recognize this executable characterize it as a <code class="language-plaintext highlighter-rouge">Trojan</code>
-<img src="/assets/img/pma/ch01/picture_02.JPG" alt="Lab01-01.exe Virus Total 02" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_02.JPG" alt="Lab01-01.exe Virus Total 02" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 2: Virus Total AV Engine Characterization for <em>Lab01-01.exe</em></strong></p>
 
@@ -97,12 +91,12 @@
 <ul>
   <li>Virustotal indicates that 41 anti-virus engines flag this binary as malicious</li>
   <li>Virustotal recognizes this hash to be associated with <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code>
-<img src="/assets/img/pma/ch01/picture_03.JPG" alt="Lab01-01.dll Virus Total 01" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_03.JPG" alt="Lab01-01.dll Virus Total 01" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 3: Virus Total Detection Summary for <em>Lab01-01.dll</em></strong></p>
 <ul>
   <li>The majority of the anti-virus engines also characterize this dll as a <code class="language-plaintext highlighter-rouge">Trojan</code>
-<img src="/assets/img/pma/ch01/picture_04.JPG" alt="Lab01-01.dll Virus Total 02" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_04.JPG" alt="Lab01-01.dll Virus Total 02" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 4: Virus Total AV Engine Characterization for <em>Lab01-01.dll</em></strong></p>
 
@@ -114,12 +108,12 @@
 
 <p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> <br />
 <strong>Compile Time</strong>: 2010/12/19 Sun 16:16:19 UTC
-<img src="/assets/img/pma/ch01/picture_05.JPG" alt="Lab01-01.exe Compile Time" width="750" /></p>
+<img src="/assets/img/pma/ch01/lab01/picture_05.JPG" alt="Lab01-01.exe Compile Time" width="750" /></p>
 <p align="center"><strong>Figure 5: Compile Time for <em>Lab01-01.exe</em> using PEview</strong></p>
 
 <p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> <br />
 <strong>Compile Time</strong>: 2010/12/16 Sun 16:16:38 UTC <br />
-<img src="/assets/img/pma/ch01/picture_06.JPG" alt="Lab01-01.dll Compile Time" width="750" /></p>
+<img src="/assets/img/pma/ch01/lab01/picture_06.JPG" alt="Lab01-01.dll Compile Time" width="750" /></p>
 <p align="center"><strong>Figure 6: Compile Time for <em>Lab01-01.dll</em> using PEview</strong></p>
 
 <p><strong>Q3. Are there any indications that either of these files is packed or obfuscated? If so, what are these indicators?</strong></p>
@@ -139,20 +133,20 @@
 <strong>Analysis</strong>:</p>
 <ul>
   <li>PEiD: Loading the file in to PEiD, the program recognizes that <code class="language-plaintext highlighter-rouge">Lab01-01.exe</code> was compiled using <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>
-<img src="/assets/img/pma/ch01/picture_07.JPG" alt="Lab01-01.exe Packed Analysis PEiD" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_07.JPG" alt="Lab01-01.exe Packed Analysis PEiD" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 7: PEiD Output for <em>Lab01-01.exe</em></strong></p>
 <ul>
   <li>Strings: We can also see in the strings output that there are several readable strings, including file paths and messages, in this executable
-<img src="/assets/img/pma/ch01/picture_08.JPG" alt="Lab01-01.exe Strings Analysis" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_08.JPG" alt="Lab01-01.exe Strings Analysis" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 8: Truncated Strings Output for <em>Lab01-01.exe</em></strong></p>
 <ul>
   <li>Imports: Using dependency walker, we can take a look at the import table for this file. It should be noted that the strings output above also shows what the file imports.
-<img src="/assets/img/pma/ch01/picture_09.JPG" alt="Lab01-01.exe Packed Analysis DepWalker 01" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_09.JPG" alt="Lab01-01.exe Packed Analysis DepWalker 01" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 9: Dependency Walker Output for <em>Lab01-01.exe</em> - <em>kernel32.dll</em></strong></p>
-<p><img src="/assets/img/pma/ch01/picture_10.JPG" alt="Lab01-01.exe Packed Analysis DepWalker 02" width="750" /></p>
+<p><img src="/assets/img/pma/ch01/lab01/picture_10.JPG" alt="Lab01-01.exe Packed Analysis DepWalker 02" width="750" /></p>
 <p align="center"><strong>Figure 10: Dependency Walker Output for <em>Lab01-01.exe</em> - <em>msvcrt.dll</em></strong></p>
 <ul>
   <li>Header Information: Pulling the file up in PEview again, we can talk a look at the <code class="language-plaintext highlighter-rouge">.text</code> section header information to view the reported size on disk (<code class="language-plaintext highlighter-rouge">Raw Size</code>) and the reported size in memory (<code class="language-plaintext highlighter-rouge">Virtual Size</code>). The <code class="language-plaintext highlighter-rouge">Virtual Size</code> (0x0970) and <code class="language-plaintext highlighter-rouge">Raw Size</code> (0x1000) are mostly the same size. The differ by 0x0690 bytes. Additionally, the <code class="language-plaintext highlighter-rouge">Virtual Size</code> is not larger than the <code class="language-plaintext highlighter-rouge">Raw Size</code>, indicating that the file is not packed.</li>
@@ -165,22 +159,22 @@
 <strong>Analysis</strong>:</p>
 <ul>
   <li>PEid: Loading the file in to PEiD, the program recognizes that <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code> was compiled using <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>
-<img src="/assets/img/pma/ch01/picture_11.JPG" alt="Lab01-01.dll Packed Analysis PEiD" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_11.JPG" alt="Lab01-01.dll Packed Analysis PEiD" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 11: PEiD Output for <em>Lab01-01.dll</em></strong></p>
 <ul>
   <li>Strings: We can see the strings produces a readable output, including was appears to be a hardcoded IP address: <code class="language-plaintext highlighter-rouge">127.26.152.13</code>
-<img src="/assets/img/pma/ch01/picture_12.JPG" alt="Lab01-01.dll Strings Analysis" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_12.JPG" alt="Lab01-01.dll Strings Analysis" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 12: Strings Output for <em>Lab01-01.dll</em></strong></p>
 <ul>
   <li>Imports: Of note, Figure 14 below only shows the ordinals of the functions that were called. We can find out what the binary actually imports by looking at the table directly below the import table. <br />
-<img src="/assets/img/pma/ch01/picture_13.JPG" alt="Lab01-01.dll DepWalker 01" width="750" /></li>
+<img src="/assets/img/pma/ch01/lab01/picture_13.JPG" alt="Lab01-01.dll DepWalker 01" width="750" /></li>
 </ul>
 <p align="center"><strong>Figure 13: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>kernel32.dll</em></strong></p>
-<p><img src="/assets/img/pma/ch01/picture_14.JPG" alt="Lab01-01.dll DepWalker 02" width="750" /></p>
+<p><img src="/assets/img/pma/ch01/lab01/picture_14.JPG" alt="Lab01-01.dll DepWalker 02" width="750" /></p>
 <p align="center"><strong>Figure 14: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>ws2_32.dll.dll</em></strong></p>
-<p><img src="/assets/img/pma/ch01/picture_15.JPG" alt="Lab01-01.dll DepWalker 03" width="750" /></p>
+<p><img src="/assets/img/pma/ch01/lab01/picture_15.JPG" alt="Lab01-01.dll DepWalker 03" width="750" /></p>
 <p align="center"><strong>Figure 15: Dependency Walker Output for <em>Lab01-01.dll</em> - <em>msvcrt.dll.dll</em></strong></p>
 <ul>
   <li>Header Information: Pulling up the file in PEview, we can look at the <code class="language-plaintext highlighter-rouge">.text</code> section header. The <code class="language-plaintext highlighter-rouge">Virtual Size</code> (0x039E) and <code class="language-plaintext highlighter-rouge">Raw Size</code> (0x1000) differ quite a bit, but the <code class="language-plaintext highlighter-rouge">Virtual Size</code> is not larger than the <code class="language-plaintext highlighter-rouge">Raw Size</code>, indicating that this file is not packed.</li>
@@ -279,149 +273,14 @@ When running strings against this file an interesting reference to a dll was dis
 <p><strong>Q6. What network-based indicators could be used to find this malware on infected machines?</strong></p>
 
 <p><strong>File</strong>: <code class="language-plaintext highlighter-rouge">Lab01-01.dll</code>   <br />
-When running strings against this file, a reference to what appears to be an IP address is discovered. Based on the import table, it is likely that this binary attempts to connect to <code class="language-plaintext highlighter-rouge">127.26.152.13</code>.</p>
+When running strings against this file, a reference to what appears to be an IP address is discovered. Based on the import table, it is likely that this binary attempts to connect to <code class="language-plaintext highlighter-rouge">127[.]26[.]152[.]13</code>.</p>
 
 <p><strong>Q7. What would you guess is the purpose of these files?</strong></p>
 
 <p>The purpose of these files is likely to install and run a backdoor. We know this because <code class="language-plaintext highlighter-rouge">CreateProcess</code> and <code class="language-plaintext highlighter-rouge">Sleep</code> are commonly used functions in backdoors. Additionally, the IP address that was found in the <code class="language-plaintext highlighter-rouge">dll</code> implies command and control functionality. Additionally, looking at the strings for the <code class="language-plaintext highlighter-rouge">.exe</code>, we see references to the <code class="language-plaintext highlighter-rouge">dll</code>. The <code class="language-plaintext highlighter-rouge">exe</code> likely looks for and/or installs the <code class="language-plaintext highlighter-rouge">dll</code>, replaces <code class="language-plaintext highlighter-rouge">kernel32.dll</code> with the <code class="language-plaintext highlighter-rouge">dll</code> as <code class="language-plaintext highlighter-rouge">kerne132.dll</code>, and then executes it.</p>
 
 <hr />
-
-<h2 id="lab-1-1-1">Lab 1-1:</h2>
-
-<h3 id="file-metadata-1">File Metadata:</h3>
-
-<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-02.exe</code> <br />
-<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">8363436878404da0ae3e46991e355b83</code></p>
-
-<h3 id="questions-1">Questions:</h3>
-
-<p><strong>Q1. Upload the <code class="language-plaintext highlighter-rouge">Lab01-02.exe</code> file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</strong> <br />
-Searching for the <a href="https://www.virustotal.com/gui/file/c876a332d7dd8da331cb8eee7ab7bf32752834d4b2b54eaa362674a2a48f64a6">hash</a> in Virus Total, we see that this file is detected by 55 out of 69 anti-virus engines used by Virus Total.</p>
-
-<p><img src="/assets/img/pma/ch01/picture_16.JPG" alt="Lab01-02.exe Virus Total 01" width="750" /></p>
-<p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-02.exe</em></strong></p>
-
-<p>The majority of these anti-virus engines characterize this file as a <code class="language-plaintext highlighter-rouge">trojan</code>.</p>
-
-<p><img src="/assets/img/pma/ch01/picture_17.JPG" alt="Lab01-02.exe Virus Total 02" width="750" /></p>
-<p align="center"><strong>Figure 2: Virus Total AV Engine Characterization for <em>Lab01-02.exe</em></strong></p>
-
-<p><strong>Q2. Are there any indications that this file is packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</strong></p>
-
-<p>Running <code class="language-plaintext highlighter-rouge">strings</code> against the binary, the first few lines we see are references to UPX. This is an indication that the file is possibly packed.</p>
-
-<p><img src="/assets/img/pma/ch01/picture_18.JPG" alt="Lab01-02.exe Strings" width="750" /></p>
-<p align="center"><strong>Figure 3: Strings Output for <em>Lab01-02.exe</em></strong></p>
-
-<p>To confirm our theory, we can load the executable in to PEiD. The results displayed indicate that the executable is infact packed using UPX1.</p>
-
-<p><img src="/assets/img/pma/ch01/picture_19.JPG" alt="Lab01-02.exe PEiD" width="750" /></p>
-<p align="center"><strong>Figure 4: PEiD Results for <em>Lab01-02.exe</em></strong></p>
-
-<p>To unpack the binary, we can use the UPX1 utility. Using the command <code class="language-plaintext highlighter-rouge">upx -d Lab01-02.exe -oLab01-02_unpacked.exe</code> results in the following:</p>
-
-<p><img src="/assets/img/pma/ch01/picture_20.JPG" alt="Lab01-02.exe Unpacking" width="750" /></p>
-<p align="center"><strong>Figure 5: Unpacking <em>Lab01-02.exe</em></strong></p>
-
-<p>Running strings against the unpacked binary, we see that there are a lot more readable strings, as well as imports that the executable uses.</p>
-
-<p><img src="/assets/img/pma/ch01/picture_21.JPG" alt="Lab01-02.exe Unpacked Strings" width="750" /></p>
-<p align="center"><strong>Figure 6: Unpacked Strings for <em>Lab01-02.exe</em></strong></p>
-
-<p>We can also run the unpacked executable against PEiD to validate that the executable is unpacked. The result tells us that th executable was compiled with <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>:</p>
-
-<p><img src="/assets/img/pma/ch01/picture_22.JPG" alt="Lab01-02.exe Unpacked PEiD" width="750" /></p>
-<p align="center"><strong>Figure 7: Unpacked PEiD Results for <em>Lab01-02.exe</em></strong></p>
-
-<p><strong>Q3. Do any imports hint at the program’s functionality? If so, which imports are they and what do they tell you?</strong></p>
-
-<p>Loading the unpacked executable in to <code class="language-plaintext highlighter-rouge">Dependency Walker</code> we see that the executable loads <code class="language-plaintext highlighter-rouge">kernel32.dll</code>, <code class="language-plaintext highlighter-rouge">advapi32.dll</code>, <code class="language-plaintext highlighter-rouge">msvcrt.dll</code>, and <code class="language-plaintext highlighter-rouge">wininet.dll</code>, and imports the following functions from each library:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">kernel32.dll</code></th>
-      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">advapi32.dll</code></th>
-      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">msvcrt.dll</code></th>
-      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">wininet.dll</code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">SystemTimeToFileTime</code></td>
-      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">CreateServiceA</code></td>
-      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">_exit</code></td>
-      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">InternetOpenURLA</code></td>
-    </tr>
-  </tbody>
-</table>
-
-<table>
-  <thead>
-    <tr>
-      <th> </th>
-      <th> </th>
-      <th> </th>
-      <th> </th>
-      <th> </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-      <td> </td>
-    </tr>
-  </tbody>
-</table>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">kernel32.dll</code>
-    <ul>
-      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-systemtimetofiletime"><code class="language-plaintext highlighter-rouge">SystemTimeToFileTime</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">GetModuleFileNameA</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">CreateWaitableTimerA</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">ExitProcess</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">OpenMutexA</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">SetWaitableTimer</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">WaitForSingleObject</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">CreateMutexA</code></a></li>
-      <li><a href=""><code class="language-plaintext highlighter-rouge">CreateThread</code></a></li>
-    </ul>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">advapi32.dll</code>
-    <ul>
-      <li><a href="">CreateServiceA</a></li>
-      <li><a href="">StartServiceCtrlDispatcherA</a></li>
-      <li><a href="">OpenSCManagerA</a></li>
-    </ul>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">msvcrt.dll</code>
-    <ul>
-      <li></li>
-    </ul>
-  </li>
-</ul>
-
-<p><strong>Q4. What host- or network-based indicators could be used to identify this malware on infected machines?</strong></p>
-
+<p align="center"><a href="/write_ups/pma/ch01/chapter_01_directory">Chapter 1 Labs Directory</a> :: <a href="/practical-malware-analysis/">Practical Malware Analysis Labs Directory</a></p>
 
 </article>
       <footer>

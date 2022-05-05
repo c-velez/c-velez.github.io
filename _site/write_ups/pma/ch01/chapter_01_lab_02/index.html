@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"  />
+  <meta http-equiv="x-ua-compatible" content="ie=edge"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"  />
+
+  <title>
+    The Mind Palace
+  </title>
+
+  <link rel="stylesheet" href="/css/main.css">
+
+  <link
+    rel="canonical"
+    href="http://localhost:4000/write_ups/pma/ch01/chapter_01_lab_02/"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open Sans:400,300,700,800,600"
+    rel="stylesheet"
+    type="text/css"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Muli:400,300"
+    rel="stylesheet"
+    type="text/css"
+  />
+</head>
+
+  <body>
+    <aside>
+  <div class="container">
+    <nav>
+      <ul>
+<li><a href="/home">Home</a></li>
+<li><a href="/resume">Resume</a></li>
+<li><a href="/contact">Contact</a></li>
+<li><a href="/courses">Course Work</a></li>
+<li><a href="/write_ups">Write Ups</a></li>
+      </ul>
+      </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<header>
+  <h1><a href="">The Mind Palace</a></h1>
+</header>
+
+    <main>
+      <article><h2></h2>
+<time>May 5, 2022</time>
+
+<h1 id="lab-1-2">Lab 1-2:</h1>
+
+<h2 id="file-metadata">File Metadata:</h2>
+
+<p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-02.exe</code> <br />
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">8363436878404da0ae3e46991e355b83</code></p>
+
+<h2 id="questions">Questions:</h2>
+
+<p><strong>Q1. Upload the <code class="language-plaintext highlighter-rouge">Lab01-02.exe</code> file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</strong> <br />
+Searching for the <a href="https://www.virustotal.com/gui/file/c876a332d7dd8da331cb8eee7ab7bf32752834d4b2b54eaa362674a2a48f64a6">hash</a> in Virus Total, we see that this file is detected by 55 out of 69 anti-virus engines used by Virus Total.</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_16.JPG" alt="Lab01-02.exe Virus Total 01" width="750" /></p>
+<p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-02.exe</em></strong></p>
+
+<p>The majority of these anti-virus engines characterize this file as a <code class="language-plaintext highlighter-rouge">trojan</code>.</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_17.JPG" alt="Lab01-02.exe Virus Total 02" width="750" /></p>
+<p align="center"><strong>Figure 2: Virus Total AV Engine Characterization for <em>Lab01-02.exe</em></strong></p>
+
+<p><strong>Q2. Are there any indications that this file is packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</strong></p>
+
+<p>Running <code class="language-plaintext highlighter-rouge">strings</code> against the binary, the first few lines we see are references to UPX. This is an indication that the file is possibly packed.</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_18.JPG" alt="Lab01-02.exe Strings" width="750" /></p>
+<p align="center"><strong>Figure 3: Strings Output for <em>Lab01-02.exe</em></strong></p>
+
+<p>To confirm our theory, we can load the executable in to PEiD. The results displayed indicate that the executable is infact packed using UPX1.</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_19.JPG" alt="Lab01-02.exe PEiD" width="750" /></p>
+<p align="center"><strong>Figure 4: PEiD Results for <em>Lab01-02.exe</em></strong></p>
+
+<p>To unpack the binary, we can use the UPX1 utility. Using the command <code class="language-plaintext highlighter-rouge">upx -d Lab01-02.exe -oLab01-02_unpacked.exe</code> results in the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_20.JPG" alt="Lab01-02.exe Unpacking" width="750" /></p>
+<p align="center"><strong>Figure 5: Unpacking <em>Lab01-02.exe</em></strong></p>
+
+<p>Running strings against the unpacked binary, we see that there are a lot more readable strings, as well as imports that the executable uses.</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_21.JPG" alt="Lab01-02.exe Unpacked Strings" width="750" /></p>
+<p align="center"><strong>Figure 6: Unpacked Strings for <em>Lab01-02.exe</em></strong></p>
+
+<p>We can also run the unpacked executable against PEiD to validate that the executable is unpacked. The result tells us that th executable was compiled with <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>:</p>
+
+<p><img src="/assets/img/pma/ch01/lab02/picture_22.JPG" alt="Lab01-02.exe Unpacked PEiD" width="750" /></p>
+<p align="center"><strong>Figure 7: Unpacked PEiD Results for <em>Lab01-02.exe</em></strong></p>
+
+<p><strong>Q3. Do any imports hint at the program’s functionality? If so, which imports are they and what do they tell you?</strong></p>
+
+<p>Loading the unpacked executable in to <code class="language-plaintext highlighter-rouge">Dependency Walker</code> we see that the executable loads <code class="language-plaintext highlighter-rouge">kernel32.dll</code>, <code class="language-plaintext highlighter-rouge">advapi32.dll</code>, <code class="language-plaintext highlighter-rouge">msvcrt.dll</code>, and <code class="language-plaintext highlighter-rouge">wininet.dll</code>, and imports the following functions from each library:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kernel32.dll</code>
+    <ul>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-systemtimetofiletime"><code class="language-plaintext highlighter-rouge">SystemTimeToFileTime</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea"><code class="language-plaintext highlighter-rouge">GetModuleFileNameA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-createwaitabletimerw"><code class="language-plaintext highlighter-rouge">CreateWaitableTimerA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess"><code class="language-plaintext highlighter-rouge">ExitProcess</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-openmutexw"><code class="language-plaintext highlighter-rouge">OpenMutexA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-setwaitabletimer"><code class="language-plaintext highlighter-rouge">SetWaitableTimer</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject"><code class="language-plaintext highlighter-rouge">WaitForSingleObject</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-createmutexa"><code class="language-plaintext highlighter-rouge">CreateMutexA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread"><code class="language-plaintext highlighter-rouge">CreateThread</code></a></li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">advapi32.dll</code>
+    <ul>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/winsvc/nf-winsvc-createservicea"><code class="language-plaintext highlighter-rouge">CreateServiceA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/winsvc/nf-winsvc-startservicectrldispatchera"><code class="language-plaintext highlighter-rouge">StartServiceCtrlDispatcherA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/winsvc/nf-winsvc-openscmanagera"><code class="language-plaintext highlighter-rouge">OpenSCManagerA</code></a></li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">msvcrt.dll</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">_exit</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_XcptFilter</code></li>
+      <li><code class="language-plaintext highlighter-rouge">exit</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_p__initenv</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__getmainargs</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_initterm</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__setusermatherr</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_adjust_fdiv</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__p__commode</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__p__fmode</code></li>
+      <li><code class="language-plaintext highlighter-rouge">__set_app_type</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_except_handler3</code></li>
+      <li><code class="language-plaintext highlighter-rouge">_controlfp</code></li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">wininet.dll</code>
+    <ul>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/wininet/nf-wininet-internetopenurla"><code class="language-plaintext highlighter-rouge">InternetOpenURLA</code></a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/win32/api/wininet/nf-wininet-internetopena"><code class="language-plaintext highlighter-rouge">InternetOpenA</code></a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>The most interesting imports here are the use of the <code class="language-plaintext highlighter-rouge">InternetOpenA</code> and <code class="language-plaintext highlighter-rouge">InternetOpenURLA</code>. <code class="language-plaintext highlighter-rouge">InternetOpenA</code> specifies the application that will use the <code class="language-plaintext highlighter-rouge">wininet</code> functions. Looking at the <code class="language-plaintext highlighter-rouge">strings</code> output, we can see references to <code class="language-plaintext highlighter-rouge">Internet Explorer 8.0</code>, which is likely the application that this function is targeting. <code class="language-plaintext highlighter-rouge">InternetOpenURLA</code> specifies the URL resource to locate through the application that is targeted by the <code class="language-plaintext highlighter-rouge">InternetOpenA</code> function. In this case, the <code class="language-plaintext highlighter-rouge">strings</code> output suggests that the target URL is likely the <code class="language-plaintext highlighter-rouge">http://www[.]malwareanalysisbook[.]com</code> domain. Additionally, the <code class="language-plaintext highlighter-rouge">CreateServiceA</code> function creates a service object and adds it to the service control manager. References to <code class="language-plaintext highlighter-rouge">MalService</code> in the <code class="language-plaintext highlighter-rouge">strings</code> output of the unpacked executable suggest that the executable creates this service and adds it to the service database.</p>
+
+<p><strong>Q4. What host- or network-based indicators could be used to identify this malware on infected machines?</strong></p>
+
+<p>A host-based indicator that could be used to hunt for, or signaturize, this executable would be for the creation of the <code class="language-plaintext highlighter-rouge">MalService</code> service. Additionally, threat hunters could search for DNS queries to <code class="language-plaintext highlighter-rouge">http://www[.]malwareanalysisbook[.]com</code> as a network-based indicator of compromise. This query could could also be signaturized at the host level, depending on the endpoit detection that is being used.</p>
+
+<hr />
+<p align="center"><a href="/write_ups/pma/ch01/chapter_01_directory">Chapter 1 Labs Directory</a> :: <a href="/practical-malware-analysis/">Practical Malware Analysis Labs Directory</a></p>
+
+</article>
+      <footer>
+    <p>By <a href="https://c-velez.github.io">Chris Velez</a></p>
+</footer>
+
+    </main>
+  </body>
+</html>
