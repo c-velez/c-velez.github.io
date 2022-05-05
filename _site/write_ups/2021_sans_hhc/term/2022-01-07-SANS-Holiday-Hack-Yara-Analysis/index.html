@@ -114,7 +114,7 @@
 /candy
 </code></pre></div></div>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.PNG" alt="Candycane Offset" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_3.png" alt="Candycane Offset" width="750" /></p>
 <p align="center"><strong>Figure 3: Location of the Candycane String</strong></p>
 
 <p>We’ll make every other letter in the string a zero. Make sure to run <code class="language-plaintext highlighter-rouge">:%!xxd -r</code> before quitting the vim session. Failure to do this will corrupt the file.</p>
@@ -126,7 +126,7 @@
 
 <p>We were able to bypass the first rule, but were blocked from execution due to <code class="language-plaintext highlighter-rouge">yara_rule_1056</code>.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.PNG" alt="Rule 1056" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/yara_analysis/picture_5.png" alt="Rule 1056" width="750" /></p>
 <p align="center"><strong>Figure 5: Execution Fails Due to Rule 1056</strong></p>
 
 <p>Looking at the rule definition reveals the following:</p>

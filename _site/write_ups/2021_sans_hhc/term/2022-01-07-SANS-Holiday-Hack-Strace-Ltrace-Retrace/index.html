@@ -79,7 +79,7 @@
 <p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_2.png" alt="Trying to Open `registration.json`" width="750" /></p>
 <p align="center"><strong>Figure 2: Trying to Open <em>registration.json</em></strong></p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_3.png" alt="Create the File it is Looking For" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_3.PNG" alt="Create the File it is Looking For" width="750" /></p>
 <p align="center"><strong>Figure 3: Create the File the Program is Looking For</strong></p>
 
 <p>Running the program after creating the registration file, we see that the program is looking for the term <code class="language-plaintext highlighter-rouge">Registration</code> inside of the file. We know this because of the call to the <code class="language-plaintext highlighter-rouge">strstr()</code> function. This function takes 2 arguments, the first argument is the string that is found, the second argument is the string it is looking for. The function returns a pointer to the beginning of the substring (the second argument) if it is found. If it doesn’t find the substring, it returns <code class="language-plaintext highlighter-rouge">NULL</code>.</p>
@@ -89,7 +89,7 @@
 
 <p>Let’s edit our registration file to make the word <code class="language-plaintext highlighter-rouge">Registration</code> the key, for the key, value pair.</p>
 
-<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_5.png" alt="Edit the Key" width="750" /></p>
+<p><img src="/assets/img/2021_sans_hhc/term/strace_ltrace_retrace/picture_5.PNG" alt="Edit the Key" width="750" /></p>
 <p align="center"><strong>Figure 5: Updated Contents of <em>registration.json</em></strong></p>
 
 <p>Running the program with the editted configuration file still yields an unregistered error. Let’s run <code class="language-plaintext highlighter-rouge">ltrace</code> against the program again and take a look at the output.</p>

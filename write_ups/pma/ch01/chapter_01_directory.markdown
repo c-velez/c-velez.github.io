@@ -15,7 +15,7 @@ This chapter discusses techniques for basic static malware analysis. The binary 
 
 - [Lab 1-1](/write_ups/pma/ch01/chapter_01_lab_01) 
 - [Lab 1-2](/write_ups/pma/ch01/chapter_01_lab_02)
-- Lab 1-3
+- [Lab 1-3](/write_ups/pma/ch01/chapter_01_lab_03)
 - Lab 1-4
 
 
