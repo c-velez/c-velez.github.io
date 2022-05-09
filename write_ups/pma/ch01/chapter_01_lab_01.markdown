@@ -5,7 +5,7 @@ date: 2022-01-28 10:41 -500
 categories: jekyll update
 ---
 
-# Lab 1-1:
+# Lab 1-1
 
 ## File Metadata:
 

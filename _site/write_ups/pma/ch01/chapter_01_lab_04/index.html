@@ -54,22 +54,111 @@
       <article><h2></h2>
 <time>May 5, 2022</time>
 
-<h1 id="lab-1-4">Lab 1-4:</h1>
+<h1 id="lab-1-4">Lab 1-4</h1>
 
 <h2 id="file-metadata">File Metadata:</h2>
 
 <p><strong>Filename</strong>: <code class="language-plaintext highlighter-rouge">Lab01-04.exe</code> <br />
-<strong>MD5</strong>: ` `</p>
+<strong>MD5</strong>: <code class="language-plaintext highlighter-rouge">625ac05fd47adc3c63700c3b30de79ab</code></p>
 
 <h2 id="questions">Questions:</h2>
 
 <p><strong>Q1. Upload the <code class="language-plaintext highlighter-rouge">Lab01-03.exe</code> file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</strong></p>
 
+<p>Searching for the hash in <a href="https://www.virustotal.com/gui/file/0fa1498340fca6c562cfa389ad3e93395f44c72fd128d7ba08579a69aaf3b126">Virus Total</a>, it looks like 54 out of 67 anit-virus engines have identified this binary as malicious.</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_01.JPG" alt="Lab01-04.exe Virus Total 01" width="750" /></p>
+<p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-03.exe</em></strong></p>
+
+<p>The majority of these engines characterize this binary as a <code class="language-plaintext highlighter-rouge">trojan</code>.</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_02.JPG" alt="Lab01-04.exe Virus Total Characterization" width="750" /></p>
+<p align="center"><strong>Figure 2: Virus Total Characterization for <em>Lab01-03.exe</em></strong></p>
+
 <p><strong>Q2. Are there any indications that the file was packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</strong></p>
 
-<p><strong>Q3. Do any imports hint at this program’s functionality? If so, which imports are they and what do they tell you?</strong></p>
+<p>Running <code class="language-plaintext highlighter-rouge">strings</code> against the binary, we can see several function calls that appear to be imports.</p>
 
-<p><strong>Q4. What host- or network-based indicators could be used to identify the malware on infected machines?</strong></p>
+<p><img src="/assets/img/pma/ch01/lab04/picture_03.JPG" alt="Lab01-04.exe Strings Output" width="750" /></p>
+<p align="center"><strong>Figure 3: Strings Output of <em>Lab01-03.exe</em></strong></p>
+
+<p>Additionally, there appear to be references to different file names, file paths, and a domain.</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_04.JPG" alt="Lab01-04.exe Strings Output 2" width="750" /></p>
+<p align="center"><strong>Figure 4: References to Filenames, File paths, and a Domain</strong></p>
+
+<p>This is a good indication that the binary is not packed, but let’s throw it in to PEiD just to be sure.</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_05.JPG" alt="Lab01-04.exe Strings Output 2" width="750" /></p>
+<p align="center"><strong>Figure 5: PEiD Output</strong></p>
+
+<p>PEiD identifies the binary as being compiled with <code class="language-plaintext highlighter-rouge">Microsoft Visual C++ 6.0</code>. This binary is not packed, so we should be able to get the import table.</p>
+
+<p><strong>Q3. When was the program compiled?</strong></p>
+
+<p>We can find the compile time using PEView under the <code class="language-plaintext highlighter-rouge">IMAGE_FILE_HEADER</code> of the binary. According to PEView, this binary was compiled 2019/08/30. Since this book was published in 2012, it is likely that this compile time if fake.</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_09.JPG" alt="Lab01-04.exe PEView" width="750" /></p>
+<p align="center"><strong>Figure 6: PEView Output</strong></p>
+
+<p><strong>Q4. Do any imports hint at this program’s functionality? If so, which imports are they and what do they tell you?</strong></p>
+
+<p>Loading the binary in to <code class="language-plaintext highlighter-rouge">Dependency Walker</code>, we see that the execuatble loads <code class="language-plaintext highlighter-rouge">kernel32.dll</code>, <code class="language-plaintext highlighter-rouge">advapi32.dll</code>, and <code class="language-plaintext highlighter-rouge">msvcrt.dll</code>.</p>
+
+<p>From <code class="language-plaintext highlighter-rouge">kernel32.dll</code>, the binary loads the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_06.JPG" alt="Lab01-04.exe Depends: kernel32.dll" width="750" /></p>
+<p align="center"><strong>Figure 7: <em>kernel32.dll</em> Imports</strong></p>
+
+<p>From <code class="language-plaintext highlighter-rouge">advapi32.dll</code>, the binary loads the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_07.JPG" alt="Lab01-04.exe Depends: advapi32.dll" width="750" /></p>
+<p align="center"><strong>Figure 8: <em>advapi32.dll</em> Imports</strong></p>
+
+<p>From <code class="language-plaintext highlighter-rouge">msvcrt.dll</code>, the binary loads the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_08.JPG" alt="Lab01-04.exe Depends: msvcrt.dll" width="750" /></p>
+<p align="center"><strong>Figure 9: <em>msvcrt.dll</em> Imports</strong></p>
+
+<p>Looking at the imports tables, we can see that the binary is looking for a file (<code class="language-plaintext highlighter-rouge">FindResourceA</code>) within a directory. Presumably, after it finds the resource, it will write the resource to disk (<code class="language-plaintext highlighter-rouge">WriteFile</code>), attempt to load (<code class="language-plaintext highlighter-rouge">LoadResource</code>), and then execute the resource using <code class="language-plaintext highlighter-rouge">WinExec</code>. Additionally, looking at the imports from <code class="language-plaintext highlighter-rouge">advapi32.dll</code>, the binary appears to also manipulate the permissions for a file in some way.</p>
+
+<p><strong>Q5. What host- or network-based indicators could be used to identify the malware on infected machines?</strong></p>
+
+<p>Looking at the <code class="language-plaintext highlighter-rouge">strings</code> output, we could use references to <code class="language-plaintext highlighter-rouge">\system32\wupdmgrd.exe</code> and <code class="language-plaintext highlighter-rouge">\winup.exe</code> as host-based indicators. Additionally, we could use the reference to <code class="language-plaintext highlighter-rouge">http://www[.]practicalmalwareanalysis[.]com/updater[.]exe</code> as a networkd-based indicator.</p>
+
+<p><strong>Q6. This file has one resource in the resource section. Use Resource Hacker to examine that resource, and then use it to extract the resource. What can you learn from the resource?</strong></p>
+
+<p>When loading the binary in to <code class="language-plaintext highlighter-rouge">Resource Hacker</code>, we see that it finds a binary in the resources section of the original executable.</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_10.JPG" alt="Lab01-04.exe Resource Hacker" width="750" /></p>
+<p align="center"><strong>Figure 10: Resource Hacker Output</strong></p>
+
+<p>We can use <code class="language-plaintext highlighter-rouge">Resource Hacker</code> to carve this binary out of the original executable (<strong>Action&gt;Save Resource to a BIN file…</strong>) to continue analysis.</p>
+
+<p>Looking at the imports of the new file, we see that it imports functions from <code class="language-plaintext highlighter-rouge">kernel32.dll</code>, <code class="language-plaintext highlighter-rouge">urlmon.dll</code>, and <code class="language-plaintext highlighter-rouge">msvcrt.dll</code>.</p>
+
+<p>From <code class="language-plaintext highlighter-rouge">kernel32.dll</code>, the binary loads the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_11.JPG" alt="Lab01-04_resource.exe Depends: kernel32.dll" width="750" /></p>
+<p align="center"><strong>Figure 11: <em>kernel32.dll</em> Imports from the New Binary</strong></p>
+
+<p>From <code class="language-plaintext highlighter-rouge">urlmon.dll</code>, the binary loads the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_12.JPG" alt="Lab01-04_resource.exe Depends: urlmon.dll" width="750" /></p>
+<p align="center"><strong>Figure 12: <em>urlmon.dll</em> Imports from the New Binary</strong></p>
+
+<p>From <code class="language-plaintext highlighter-rouge">msvcrt.dll</code>, the binary loads the following:</p>
+
+<p><img src="/assets/img/pma/ch01/lab04/picture_13.JPG" alt="Lab01-04_resrouce.exe Depends: msvcrt.dll" width="750" /></p>
+<p align="center"><strong>Figure 13: <em>msvcrt.dll</em> Imports from the New Binary</strong></p>
+
+<p>Using the import table and the strings output, we can infer a few things about this malware.</p>
+
+<ol>
+  <li>The original binary was a shell that would unpack the downloader and load it. This can be inferred because of the references to <code class="language-plaintext highlighter-rouge">FindResourceA</code> in the original binary, that was not in the resource that we carved out.</li>
+  <li>The resource that was carved out attempts to download a file to disk from <code class="language-plaintext highlighter-rouge">http://www[.]practicalmalwareanalysis[.]com/updater[.]exe</code> and likely saves it to <code class="language-plaintext highlighter-rouge">\system32\wupdmgrd.exe</code>.</li>
+  <li>The resource also attempts to execute the downloaded file. This can be inferred because of the reference to <code class="language-plaintext highlighter-rouge">WinExec</code> in the import table.</li>
+</ol>
 
 <hr />
 <p align="center"><a href="/write_ups/pma/ch01/chapter_01_directory">Chapter 1 Labs Directory</a> :: <a href="/practical-malware-analysis/">Practical Malware Analysis Labs Directory</a></p>

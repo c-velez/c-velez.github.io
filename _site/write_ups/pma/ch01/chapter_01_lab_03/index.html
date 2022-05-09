@@ -54,7 +54,7 @@
       <article><h2></h2>
 <time>May 5, 2022</time>
 
-<h1 id="lab-1-3">Lab 1-3:</h1>
+<h1 id="lab-1-3">Lab 1-3</h1>
 
 <h2 id="file-metadata">File Metadata:</h2>
 
@@ -63,8 +63,9 @@
 
 <h2 id="questions">Questions:</h2>
 
-<p><strong>Q1. Upload the <code class="language-plaintext highlighter-rouge">Lab01-03.exe</code> file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</strong> <br />
-Searching for the <a href="https://www.virustotal.com/gui/file/7983a582939924c70e3da2da80fd3352ebc90de7b8c4c427d484ff4f050f0aec">hash</a>, we can see that 58 out of 68 anti-virus engines flagged this binary as malicious.</p>
+<p><strong>Q1. Upload the <code class="language-plaintext highlighter-rouge">Lab01-03.exe</code> file to <a href="https://virustotal.com">Virus Total</a>. Does it match any existing antivirus definitions?</strong></p>
+
+<p>Searching for the <a href="https://www.virustotal.com/gui/file/7983a582939924c70e3da2da80fd3352ebc90de7b8c4c427d484ff4f050f0aec">hash</a>, we can see that 58 out of 68 anti-virus engines flagged this binary as malicious.</p>
 
 <p><img src="/assets/img/pma/ch01/lab03/picture_01.JPG" alt="Lab01-03.exe Virus Total 01" width="750" /></p>
 <p align="center"><strong>Figure 1: Virus Total Detection Summary for <em>Lab01-03.exe</em></strong></p>
@@ -74,8 +75,9 @@ Searching for the <a href="https://www.virustotal.com/gui/file/7983a582939924c70
 <p><img src="/assets/img/pma/ch01/lab03/picture_02.JPG" alt="Lab01-03.exe Virus Total Characterization" width="750" /></p>
 <p align="center"><strong>Figure 2: Virus Total Characterization for <em>Lab01-03.exe</em></strong></p>
 
-<p><strong>Q2. Are there any indications that the file was packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</strong>
-Running strings on the file, it is observed the the listing is small, with references to <code class="language-plaintext highlighter-rouge">LoadLibraryA</code> and <code class="language-plaintext highlighter-rouge">GetProcAddress</code>. These function calls are known to be seen with packed binaries since the program need to reference these functions in order to unpack itself</p>
+<p><strong>Q2. Are there any indications that the file was packed or obfuscated? If so, what are these indicators? If the file is packed, unpack it if possible.</strong></p>
+
+<p>Running strings on the file, it is observed the the listing is small, with references to <code class="language-plaintext highlighter-rouge">LoadLibraryA</code> and <code class="language-plaintext highlighter-rouge">GetProcAddress</code>. These function calls are known to be seen with packed binaries since the program need to reference these functions in order to unpack itself</p>
 
 <p><img src="/assets/img/pma/ch01/lab03/picture_03.JPG" alt="Lab01-03.exe Strings Output" width="750" /></p>
 <p align="center"><strong>Figure 3: Strings Output of <em>Lab01-03.exe</em></strong></p>
